@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  {% from "includes/_form_helpers.html" import render_field %}
+
+  <div class="outer">
+    <div class="middle">
+      <h3 class="text-center mb-3 pb-3"> Create Admin Account </h3>
+      <div class="inner">
+
+        <form method="POST" action="">
+          <div class="form-group">
+            {{ render_field(form.Name, class="form-control")}}
+          </div>
+          <div class="form-group">
+            {{ render_field(form.Email, class="form-control")}}
+          </div>
+          <div class="form-group">
+            {{ render_field(form.Username, class="form-control")}}
+          </div>
+          <div class="form-group">
+            {{ render_field(form.Password, class="form-control")}}
+          </div>
+          <div class="form-group">
+            {{ render_field(form.Confirm, class="form-control")}}
+          </div>
+          <div class="form-group">
+            {{ render_field(form.Department, class="form-control")}}
+          </div>
+          <!-- Button -->
+          <div class="box mt-4">
+            <input type="submit" class="btn btn-primary submit-button" value="Submit">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
