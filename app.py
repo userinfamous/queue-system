@@ -1,13 +1,23 @@
+#Author: Vuottek Un
+#Project Title: Queue-System
+#Description:
+#   The upper parts are imports and declaration of the app
+#   after that, comes all the features that we implement.
+#   Then there's the classes, and at the bottom is the app.run() itself.
+
+#Importing necessary dependencies for the project
 from flask import Flask, render_template, redirect, flash, url_for, request, session, logging
 from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, SelectField, IntegerField, PasswordField, validators
 from passlib.hash import sha256_crypt
 
+#app is the name of the flask app
 app = Flask(__name__)
-app.secret_key = "i7T7e@CkqVkuHT5Lo9PH9xeg"
-app.config["TEMPLATES_AUTO_RELOAD"] = True
 
-#Config MySQL
+#necessary for session to work
+app.secret_key = "i7T7e@CkqVkuHT5Lo9PH9xeg"
+
+#Configuring MySQL
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
@@ -17,10 +27,12 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 #Initialize MySQL
 mysql = MySQL(app)
 
+#Enduser index page
 @app.route('/')
 def index_choose_language():
     return render_template('enduser/select_language.html')
 
+#This is the select user role page for the enduser. options:(parent/student/visitor)
 @app.route('/select_user_type')
 def select_user_type():
     return render_template('enduser/select_user_type.html')
@@ -72,7 +84,7 @@ def login():
                 session['username'] = Username
 
                 flash("You are now logged in !  (◠‿◠✿)", 'success')
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('workspace'))
             else:
                 error = 'Invalid Credentials. (◡︿◡✿)'
                 return render_template('admin/login.html',error=error)
@@ -84,9 +96,9 @@ def login():
 
     return render_template('admin/login.html')
 
-@app.route('/dashboard')
-def dashboard():
-    return render_template('admin/dashboard.html')
+@app.route('/workspace')
+def workspace():
+    return render_template('admin/workspace.html')
 
 class RequestForm(Form):
     Parent_name = StringField('Full Name', [validators.Length(min=1,max=100)])

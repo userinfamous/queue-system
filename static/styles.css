@@ -1,8 +1,3 @@
-/* Line break*/
-.clear {
-  clear:both;
-}
-
 /* The usage of flex in boxes allows the content to be more flexible in terms of display (especially smaller screens)*/
 .box {
   display: flex;
@@ -14,6 +9,11 @@
   width: auto;
   height: auto;
 }
+
+
+
+
+
 
 /* Vertical center alignment
 outer: is for differentiating between middle and center, absolute position relative to body (the parent ancestor position).
@@ -39,6 +39,8 @@ inner: an addon for making content under middle class appear a certain way.
   /*whatever width you want*/
 }
 
+
+/* Custom Classes*/
 .error-message {
   color: red;
 }
@@ -46,6 +48,29 @@ inner: an addon for making content under middle class appear a certain way.
 .submit-button {
   width: 150px;
 }
+
+.clear {
+  clear:both;
+}
+a.decoration-none {
+  text-decoration: none;
+  color: black;
+}
+
+a.decoration-none:active {
+  text-decoration: underline;
+  color: orange;
+}
+
+
+
+
+
+
+
+
+
+
 
 /* Dashboard Navbar */
 [role="main"] {
@@ -77,8 +102,13 @@ inner: an addon for making content under middle class appear a certain way.
   box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
 }
 
-/* Dashboard Sidebar */
 
+
+
+
+
+
+/* Dashboard Sidebar */
 .sidebar {
   position: fixed;
   top: 0;

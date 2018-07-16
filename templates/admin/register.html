@@ -5,10 +5,14 @@
 
   <div class="outer">
     <div class="middle">
-      <h3 class="text-center mb-3 pb-3"> Create Admin Account </h3>
       <div class="inner">
 
         <form method="POST" action="">
+
+          {% include 'includes/_logo.html' %} <!-- CIA First Logo-->
+
+          <h3 class="text-center mb-3 pb-3"> Create Admin Account </h3>
+
           <div class="form-group">
             {{ render_field(form.Name, class="form-control")}}
           </div>
@@ -29,7 +33,7 @@
           </div>
           <!-- Button -->
           <div class="box mt-4">
-            <input type="submit" class="btn btn-primary submit-button" value="Submit">
+            <input type="submit" class="btn btn-primary submit-button" value="Register">
           </div>
         </form>
       </div>
