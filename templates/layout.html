@@ -11,8 +11,8 @@
     <!-- Web App's personal bootstrap -->
     <link href="/static/styles.css" rel="stylesheet" type="text/css">
 
-    <!-- Flags -->
-    <link href="static/flags/flags.min.css" rel=stylesheet type="text/css">
+    <!-- Specific to certain pages -->
+    {% block head %}{% endblock %}
 
     <title> My Flask App </title>
   </head>
@@ -27,43 +27,12 @@
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.bundle.min.js" integrity="sha384-CS0nxkpPy+xUkNGhObAISrkg/xjb3USVCwy+0/NMzd5VxgY4CMCyTkItmy5n0voC" crossorigin="anonymous"></script>
 
-      <!-- Icons -->
-      <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
-      <script>
-        feather.replace()
-      </script>
+      <!-- JQuery-->
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
 
-      <!-- Graphs -->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
-      <script>
-        var ctx = document.getElementById("myChart");
-        var myChart = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-            datasets: [{
-              data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-              lineTension: 0,
-              backgroundColor: 'transparent',
-              borderColor: '#007bff',
-              borderWidth: 4,
-              pointBackgroundColor: '#007bff'
-            }]
-          },
-          options: {
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: false
-                }
-              }]
-            },
-            legend: {
-              display: false,
-            }
-          }
-        });
-      </script>
+      <!-- Adding Personal JQuery onto site-->
+      <script src="js/script.js"></script>
+
   </body>
 
 </html>
