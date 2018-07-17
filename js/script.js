@@ -4,4 +4,7 @@ $(document).ready(function () {
     $('.active').toggle();
   });
 
+  setTimeout(function() {
+      $('.flashes').delay(50).slideUp(250);
+  }, 300);
 });

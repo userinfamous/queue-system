@@ -15,16 +15,16 @@
 
           <div class="form-group">
             <label> Username </label>
-            <input type="text" name="Username" class="form-control" value="{{request.form.Username}}">
+            <input type="text" name="Username" class="form-control" value="{{request.form.Username}}" required>
           </div>
 
           <div class="form-group">
             <label> Password </label>
-            <input type="password" name="Password" class="form-control" value="{{request.form.Password}}">
+            <input type="password" name="Password" class="form-control" value="{{request.form.Password}}" required>
           </div>
 
           <div class="box mt-4">
-          <button type="submit" class="btn btn-primary submit-button">Login </button>
+            <button type="submit" class="btn btn-primary submit-button">Login </button>
           </div>
         </form>
     </div>

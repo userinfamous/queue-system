@@ -32,11 +32,44 @@ mysql = MySQL(app)
 def index_choose_language():
     return render_template('enduser/select_language.html')
 
-#This is the select user role page for the enduser. options:(parent/student/visitor)
-@app.route('/select_user_type')
+#Enduser select user type page. (parent/student/visitor)
+@app.route('/select_user_type', methods=['GET','POST'])
 def select_user_type():
+    if request.method == 'POST':
+        Session['User_type'] = request.form['User_type']
+        return redirect(url_for('request'))
     return render_template('enduser/select_user_type.html')
 
+@app.route('/request',methods=['GET','POST'])
+def request():
+    #Making form an object of a class
+    form = RequestForm(request.form)
+
+    if request.method == 'POST':
+        Fullname = form.Name.data
+        Student_name = form.Email.data
+        Student_id = form.Username.data
+
+        #Create DictCursor
+        cur = mysql.connection.cursor()
+
+        cur.execute("""INSERT INTO queue(Fullname, Student_name, Student_id)
+        VALUES(%s, %s, %s)""", (Fullname, Student_name, Student_id))
+
+        #commit to DB
+        mysql.connection.commit()
+
+        #Close connection
+        cur.close()
+
+        flash("Request Completed !", "success")
+
+        return redirect(url_for('select_language'))
+    return render_template('enduser/request.html', form=form)
+
+
+
+#Admin Registeration page, can technically be accessed by anyone
 @app.route('/register',methods=['GET','POST'])
 def register():
     form = RegisterForm(request.form)
@@ -59,7 +92,7 @@ def register():
         #Close connection
         cur.close()
 
-        flash("Admin Registered!", "success")
+        flash("Registered as Admin !", "success")
 
         return redirect(url_for('login'))
     return render_template('admin/register.html', form=form)
@@ -96,14 +129,28 @@ def login():
 
     return render_template('admin/login.html')
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You are now logged out.', 'success')
+    return redirect(url_for('login'))
+
+
+
 @app.route('/workspace')
 def workspace():
     return render_template('admin/workspace.html')
 
 class RequestForm(Form):
-    Parent_name = StringField('Full Name', [validators.Length(min=1,max=100)])
-    Student_name = StringField('Full Name', [validators.Length(min=1,max=100)])
-    Student_id = IntegerField('Student ID', [validators.NumberRange(min=0, max=10)] )
+    Fullname = StringField('Full Name',[
+        validators.DataRequired(),
+        validators.Length(min=1,max=100)])
+    Student_name = StringField('Student Name',[
+        validators.DataRequired(),
+        validators.Length(min=1,max=100)])
+    Student_id = IntegerField('Student ID',[
+        validators.NumberRange(min=0, max=10)] )
+
 
 class RegisterForm(Form):
     Name = StringField('Full Name', [
@@ -123,7 +170,7 @@ class RegisterForm(Form):
         validators.DataRequired(),
     ])
     Department = SelectField( 'Select Department',
-        choices = [(-1,'<Select Department>'),('acc_dp','Accounting Department'), ('fd_dp','Front Desk'), ('it_dp','IT Department')]
+        choices = [(-1,'<Select Department>'),('Accounting Department','Accounting Department'), ('Front Desk','Front Desk'), ('IT Department','IT Department')]
     )
 
 if __name__ == '__main__':

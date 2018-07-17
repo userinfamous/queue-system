@@ -2,28 +2,32 @@
 
 {% block body %}
   {% from "includes/_form_helpers.html" import render_field %}
+
   <div class="outer">
-
     <div class="middle">
-
       <div class="inner">
+        {% if session.User_type == 'Parent' %}
         <form method="POST" action="">
 
-          {% include 'includes/_logo.html' %} <!-- CIA First Logo-->
-
           <div class="form-group">
-            <input type="submit" name="User_type" class="form-control" value="Parent" >
+            {{ render_field(form.Fullname, class="form-control")}}
           </div>
-
           <div class="form-group">
-            <input type="submit" name="User_type" class="form-control" value="Student" >
+            {{ render_field(form.Student_name, class="form-control")}}
           </div>
-
           <div class="form-group">
-            <input type="submit" name="User_type" class="form-control" value="Visitor" >
+            {{ render_field(form.Student_id, class="form-control")}}
           </div>
 
         </form>
+
+        {% endif %}
+
+      </div>
     </div>
   </div>
-{% endblock %}
+
+
+
+
+{% endblock}

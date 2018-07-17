@@ -10,6 +10,11 @@
   height: auto;
 }
 
+/*Flashing Messages*/
+.flashes {
+  border-radius: 0px;
+  z-index: 1031; /*We don't want the navbar(1030) to appear over on top*/
+}
 
 
 
@@ -101,7 +106,6 @@ a.decoration-none:active {
   border-color: transparent;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
 }
-
 
 
 
