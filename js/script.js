@@ -5,6 +5,6 @@ $(document).ready(function () {
   });
 
   setTimeout(function() {
-      $('.flashes').delay(50).slideUp(250);
-  }, 300);
+      $('.flashes').slideUp('fast');
+  }, 2500); /* in milliseconds (2.5 seconds) */
 });

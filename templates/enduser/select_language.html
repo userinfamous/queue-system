@@ -9,25 +9,33 @@
   <div class="outer">
     <div class="container middle text-center">
 
-      <h2 class="pb-4"> Select Language </h2>
+      <h3 class="pb-4"> ជ្រើសរើស​ភាសា/Select Language</h3>
 
       <div class="row inner">
 
-        <div class="col-sm-6">
-          <a href="/select_user_type" class="decoration-none">
-            <h4>Khmer</h4>
-            <div class="clear"></div>
-            <img src="/static/flags/blank.gif" class="flag flag-kh" alt="Khmer" />
-          </a>
-        </div>
 
-        <div class="col-sm-6">
-          <a href="/select_user_type" class="decoration-none">
-            <h4>English</h4>
-            <div class="clear"></div>
-            <img src="/static/flags/blank.gif" class="flag flag-gb" alt="English" />
-          </a>
-        </div>
+
+          <div class="col-sm-6">
+            <form action="" method="POST" >
+              <button type="submit" name="Selected_language" value="Khmer" class="btn btn-light submit-button">
+                <h4>ខ្មែរ</h4>
+                <div class="clear"></div>
+                <img src="/static/flags/blank.gif" class="flag flag-kh" alt="Khmer" />
+              </button>
+            </form>
+          </div>
+
+          <div class="col-sm-6">
+            <form action="" method="POST" >
+              <button type="submit" name="Selected_language" value="English" class="btn btn-light submit-button">
+                <h4>English</h4>
+                <div class="clear"></div>
+                <img src="/static/flags/blank.gif" class="flag flag-gb" alt="English" />
+              </button>
+            </form>
+          </div>
+
+
 
       </div>
     </div>

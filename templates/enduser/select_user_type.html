@@ -3,27 +3,24 @@
 {% block body %}
   {% from "includes/_form_helpers.html" import render_field %}
   <div class="outer">
-
     <div class="middle">
-
       <div class="inner">
-        <form method="POST" action="">
+        <form action="" method="POST" >
+          <h3 class="text-center mb-3 pb-3"> {% if session.Selected_language == 'English'%} I am a ... {% else %} ខ្ញុំ​ជា... {% endif %} </h3>
 
-          {% include 'includes/_logo.html' %} <!-- CIA First Logo-->
+          <button type="submit" name="User_type" value="Parent" class="btn btn-info btn-lg btn-block">
+            {% if session.Selected_language == 'English'%} Parent {% else %} ឪពុកម្តាយ {% endif %}
+          </button>
 
-          <div class="form-group">
-            <input type="submit" name="User_type" class="form-control" value="Parent" >
-          </div>
+          <button type="submit" name="User_type" value="Student" class="btn btn-info btn-lg btn-block">
+            {% if session.Selected_language == 'English'%} Student {% else %} សិស្ស {% endif %}
+          </button>
 
-          <div class="form-group">
-            <input type="submit" name="User_type" class="form-control" value="Student" >
-          </div>
-
-          <div class="form-group">
-            <input type="submit" name="User_type" class="form-control" value="Visitor" >
-          </div>
-
+          <button type="submit" name="User_type" value="Visitor" class="btn btn-info btn-lg btn-block">
+            {% if session.Selected_language == 'English'%} Visitor {% else %} ផ្ញ្យេវ {% endif %}
+          </button>
         </form>
+      </div>
     </div>
   </div>
 {% endblock %}

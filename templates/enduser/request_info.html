@@ -1,0 +1,122 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  {% from "includes/_form_helpers.html" import render_field %}
+
+  <div class="outer">
+    <div class="middle">
+      <div class="inner">
+
+        <form method="POST" action="">
+        <!-- Visitor-->
+        {% if session.User_type == 'Parent' %} <!-- Parent-->
+          {% if session.Selected_language == 'English' %} <!-- If user picked english-->
+
+            <h3 class="text-center mb-3 pb-3"> Parent Information Request Form </h3>
+            <div class="form-group">
+              {{ render_field(form.en_Parent_name, class="form-control" ,placeholder="*Required" )}}
+            </div>
+            <div class="form-group">
+              {{ render_field(form.en_Student_name, class="form-control" ,placeholder="*Required" )}}
+            </div>
+            <div class="form-group">
+              {{ render_field(form.en_Student_id, class="form-control" ,placeholder="*Optional" )}}
+            </div>
+
+          {% else %} <!-- If user picked Khmer-->
+
+            <h3 class="text-center mb-3 pb-3"> ឪពុកម្តាយសំណុំបែបបទស្នើសុំព័ត៌មាន </h3>
+            <div class="form-group">
+              {{ render_field(form.kh_Parent_name, class="form-control" ,placeholder="*ត្រូវការ" )}}
+            </div>
+            <div class="form-group">
+              {{ render_field(form.kh_Student_name, class="form-control" ,placeholder="*ត្រូវការ" )}}
+            </div>
+            <div class="form-group">
+              {{ render_field(form.kh_Student_id, class="form-control" ,placeholder="*មិនចាំបាច់" )}}
+            </div>
+
+          {% endif %}
+
+        <!-- Student -->
+        {%elif session.User_type == 'Student' %}
+          {% if session.Selected_language == 'English' %} <!-- If user picked english-->
+
+            <h3 class="text-center mb-3 pb-3"> Student Information Request Form </h3>
+            <div class="form-group">
+              {{ render_field(form.en_Student_name, class="form-control" ,placeholder="*Required" )}}
+            </div>
+            <div class="form-group">
+              {{ render_field(form.en_Student_id, class="form-control" ,placeholder="*Optional" )}}
+            </div>
+
+          {% else %} <!-- If user picked Khmer-->
+
+            <h3 class="text-center mb-3 pb-3"> និសសិតសំណុំបែបបទស្នើសុំព័ត៌មាន </h3>
+            <div class="form-group">
+              {{ render_field(form.kh_Student_name, class="form-control" ,placeholder="*ត្រូវការ" )}}
+            </div>
+            <div class="form-group">
+              {{ render_field(form.kh_Student_id, class="form-control" ,placeholder="*មិនចាំបាច់" )}}
+            </div>
+
+          {% endif %}
+
+
+        <!-- Visitor-->
+        {%else%}
+
+          {% if session.Selected_language == 'English' %} <!-- If user picked english-->
+            <h3 class="text-center mb-3 pb-3"> Visitor Information Request Form </h3>
+            <div class="form-group">
+              {{ render_field(form.en_Parent_name, class="form-control" ,placeholder="*Required" )}}
+            </div>
+
+            <div class="form-group">
+              {{ render_field(form.en_Student_name, class="form-control" ,placeholder="*Required" )}}
+            </div>
+
+            <div class="form-group">
+              {{ render_field(form.en_Contact, class="form-control" ,placeholder="*Optional" )}}
+            </div>
+
+          {% else %} <!-- If user picked Khmer-->
+
+            <h3 class="text-center mb-3 pb-3"> អ្នកមកមើលសំណុំបែបបទស្នើសុំព័ត៌មាន </h3>
+            <div class="form-group">
+              {{ render_field(form.kh_Parent_name, class="form-control" ,placeholder="*ត្រូវការ" )}}
+            </div>
+
+            <div class="form-group">
+              {{ render_field(form.kh_Student_name, class="form-control" ,placeholder="*ត្រូវការ" )}}
+            </div>
+
+            <div class="form-group">
+              {{ render_field(form.kh_Contact, class="form-control" ,placeholder="*មិនចាំបាច់" )}}
+            </div>
+          {% endif %}
+
+        {% endif %}
+        <!-- END OF CONDITIONAL STATEMENT-->
+
+          <!-- Submit Button -->
+          {% if session.Selected_language == 'English' %} <!-- If user picked english-->
+            <div class="box mt-4">
+              <input type="submit" class="btn btn-primary submit-button " value="Confirm">
+            </div>
+          {% else %}
+            <div class="box mt-4">
+              <input type="submit" class="btn btn-primary submit-button " value="បហ្ជាក់">
+            </div>
+          {% endif %}
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+{% endblock %}

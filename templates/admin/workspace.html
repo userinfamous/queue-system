@@ -68,6 +68,7 @@
               <thead>
                 <tr>
                   <th>Number</th>
+                  <th>User Type </th>
                   <th>Parent Name</th>
                   <th>Student Name</th>
                   <th>ID</th>
@@ -76,22 +77,17 @@
                 </tr>
               </thead>
               <tbody>
+                {% for queue in queues %}
                 <tr>
-                  <td>1</td>
-                  <td>N/A</td>
-                  <td>Vuottek Un</td>
-                  <td>3484</td>
-                  <td>Renrollment</td>
-                  <td>Waiting</td>
+                  <td>{{queue.Number}}</td>
+                  <td>{{queue.User_type}}</td>
+                  <td>{{queue.Parent_name}}</td>
+                  <td>{{queue.Student_name}}</td>
+                  <td>{{queue.Student_id}}</td>
+                  <td>{{queue.Request_type}}</td>
+                  <td>{{queue.Status}}</td>
                 </tr>
-                <tr>
-                  <td>2</td>
-                  <td>John Doe</td>
-                  <td>John Moe</td>
-                  <td>1234</td>
-                  <td>Renrollment</td>
-                  <td>Waiting</td>
-                </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>
@@ -102,6 +98,7 @@
               <thead>
                 <tr>
                   <th>Number</th>
+                  <th>User Type </th>
                   <th>Parent Name</th>
                   <th>Student Name</th>
                   <th>ID</th>
@@ -110,22 +107,17 @@
                 </tr>
               </thead>
               <tbody>
+                {% for queue in queues %}
                 <tr>
-                  <td>1</td>
-                  <td>N/A</td>
-                  <td>Vuottek Un</td>
-                  <td>3484</td>
-                  <td>Renrollment</td>
-                  <td>Waiting</td>
+                  <td>{{queue.Number}}</td>
+                  <td>{{queue.User_type}}</td>
+                  <td>{{queue.Parent_name}}</td>
+                  <td>{{queue.Student_name}}</td>
+                  <td>{{queue.Student_id}}</td>
+                  <td>{{queue.Request_type}}</td>
+                  <td>{{queue.Status}}</td>
                 </tr>
-                <tr>
-                  <td>2</td>
-                  <td>John Doe</td>
-                  <td>John Moe</td>
-                  <td>1234</td>
-                  <td>Renrollment</td>
-                  <td>Waiting</td>
-                </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>
