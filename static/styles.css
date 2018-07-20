@@ -19,7 +19,7 @@
 .queue-container{
     min-height: 800px;
     max-height:800px;
-    overflow-y: scroll;
+    overflow-y: auto;
     width:90%;
     margin-left: 40px;
 }
@@ -29,6 +29,7 @@
 }
 .accounting-workspace {
   margin-top: 100px;
+  margin-bottom: 100px;
 
 }
 
