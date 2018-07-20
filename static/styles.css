@@ -16,6 +16,21 @@
   z-index: 1031; /*We don't want the navbar(1030) to appear over on top*/
 }
 
+.queue-container{
+    min-height: 800px;
+    max-height:800px;
+    overflow-y: scroll;
+    width:90%;
+    margin-left: 40px;
+}
+
+.front-desk-workspace {
+
+}
+.accounting-workspace {
+  margin-top: 100px;
+
+}
 
 
 
