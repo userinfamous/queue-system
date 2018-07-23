@@ -12,6 +12,16 @@ from wtforms import Form, StringField, TextAreaField, SelectField, IntegerField,
 from passlib.hash import sha256_crypt
 from helpers import login_required, collect_form_data
 
+import pusher
+
+pusher_client = pusher.Pusher(
+  app_id='565012',
+  key='eefbd3472aabb2b3fc60',
+  secret='847a073500e5464a47f9',
+  cluster='ap1',
+  ssl=True
+)
+
 #app is the name of the flask app
 app = Flask(__name__)
 
@@ -59,8 +69,22 @@ def request_info():
         #Create a dictionary cursor
         cur = mysql.connection.cursor()
 
+        #Check for duplicates
+        check = cur.execute("SELECT * FROM queue WHERE Student_name=%s",[Data['Student_name']] )
+
+        if check > 0:
+            #Flask message
+            flash("Request Failed Duplicates Sent !", "danger")
+            #Close connection
+            cur.close()
+            
+            return redirect(url_for('select_language'))
+
+        #Update the database
         cur.execute("""INSERT INTO queue(User_type,Parent_name, Student_name, Student_id, Contact)
         VALUES(%s, %s, %s, %s, %s)""", (session["User_type"], Data['Parent_name'], Data['Student_name'], Data['Student_id'],  Data['Contact']))
+
+        results = cur.execute("SELECT * FROM queue")
 
         #commit to DB
         mysql.connection.commit()
@@ -68,12 +92,24 @@ def request_info():
         #Close connection
         cur.close()
 
+        #Flask message
         flash("Request Completed !", "success")
+
+        #clearning 'undefine' out of real time interface
+        pusher_client.trigger('queue-channel', 'queue-event', {
+            'Number': results,
+            'User_type': session['User_type'],
+            'Parent_name': Data['Parent_name'],
+            'Student_name': Data['Student_name'],
+            'Student_id': Data['Student_id'],
+            'Contact': Data['Contact'],
+            'Request_type': '',
+            'Status': ''
+        })
 
         return redirect(url_for('select_language'))
 
     return render_template('enduser/request_info.html',form=form)
-
 
 #Admin Registeration page, can technically be accessed by anyone
 @app.route('/register',methods=['GET','POST'])
@@ -98,6 +134,7 @@ def register():
         #Close connection
         cur.close()
 
+        #Flash message
         flash("Registered as Admin !", "success")
 
         return redirect(url_for('login'))
@@ -149,16 +186,16 @@ def logout():
 @app.route('/workspace')
 @login_required
 def workspace():
-    cur = mysql.connection.cursor()
 
+    cur = mysql.connection.cursor()
     results = cur.execute("SELECT * FROM queue")
     queues = cur.fetchall()
 
     if results > 0:
         return render_template('admin/workspace.html',queues=queues)
     else:
-        msg = "No One is in Queue"
-        return render_template('admin/workspace.html',msg=msg)
+        no_queue = " No Queue "
+        return render_template('admin/workspace.html',no_queue=no_queue)
     cur.close()
 
 #request form class

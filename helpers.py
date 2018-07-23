@@ -19,26 +19,26 @@ def collect_form_data(form):
     if session["Selected_language"] == 'English':
 
         if session["User_type"] == "Parent":
-            Contact = "Unspecified"
+            Contact = ""
             Parent_name = form.en_Parent_name.data
             if form.en_Student_id == None:
-                Student_id = "Unspecified"
+                Student_id = ""
             else:
                 Student_id = form.en_Student_id.data
 
         if session["User_type"] == "Student":
-            Contact = "Unspecified"
-            Parent_name = "Unspecified"
+            Contact = ""
+            Parent_name = ""
             if form.en_Student_id.data == None:
-                Student_id = "Unspecified"
+                Student_id = ""
             else:
                 Student_id = form.en_Student_id.data
 
         if session["User_type"] == "Visitor":
-            Student_id = "Unspecified"
+            Student_id = ""
             Parent_name = form.en_Parent_name.data
             if form.en_Contact.data == None:
-                Contact = "Unspecified"
+                Contact = ""
             else:
                 Contact = form.en_Contact.data
 
@@ -47,26 +47,26 @@ def collect_form_data(form):
     else: #Khmer form data
 
         if session["User_type"] == "Parent":
-            Contact = "Unspecified"
+            Contact = ""
             Parent_name = form.kh_Parent_name.data
             if form.kh_Student_id == None:
-                Student_id = "Unspecified"
+                Student_id = ""
             else:
                 Student_id = form.kh_Student_id.data
 
         if session["User_type"] == "Student":
-            Contact = "Unspecified"
-            Parent_name = "Unspecified"
+            Contact = ""
+            Parent_name = ""
             if form.kh_Student_id.data == None:
-                Student_id = "Unspecified"
+                Student_id = ""
             else:
                 Student_id = form.kh_Student_id.data
 
         if session["User_type"] == "Visitor":
-            Student_id = "Unspecified"
+            Student_id = ""
             Parent_name = form.kh_Parent_name.data
             if form.kh_Contact.data == None:
-                Contact = "Unspecified"
+                Contact = ""
             else:
                 Contact = form.kh_Contact.data
 

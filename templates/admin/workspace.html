@@ -1,138 +1,102 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    {% include 'includes/_navbar.html'%}
 
-    <div class="container-fluid">
-      <div class="row">
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-          <div class="sidebar-sticky">
-            <ul class="nav flex-column">
-              <li class="nav-item">
-                <a class="nav-link" href="/workspace">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                  Workspace
-                </a>
-              </li>
-            </ul>
+  <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/workspace"> School Logo</a>
+    <span class="text-white"> Welcome to your workspace {{session.username}} !</span>
+    <ul class="navbar-nav px-3">
+      <li class="nav-item text-nowrap">
+        <a class="nav-link" href="/logout">Log out</a>
+      </li>
+    </ul>
+  </nav>
 
-            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-              <span>Queue Requests Control Flow</span>
-              <a class="d-flex align-items-center text-muted" href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle"></svg>
-              </a>
-            </h6>
-            <ul class="nav flex-column mb-2">
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                  Today's Requests
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                  Archive
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                  Undo
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                  Move
-                </a>
-              </li>
-            </ul>
-          </div>
-        </nav>
 
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4"><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
-          <div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
-            <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
-              <div style="position:absolute;width:200%;height:200%;left:0; top:0">
-              </div>
-            </div>
-          </div>
-          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">Queue</h1>
-          </div>
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <div class="sidebar-sticky">
 
-          <div class="front-desk-workspace">
-            <h3 class="text-center"> Front Desk </h3>
-            <div class="table-responsive queue-container">
-              <table class="table table-striped table-sm">
-                <thead>
-                  <tr>
-                    <th>Number</th>
-                    <th>User Type </th>
-                    <th>Parent Name</th>
-                    <th>Student Name</th>
-                    <th>ID</th>
-                    <th>Request Type</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for queue in queues %}
-                  <tr>
-                    <td>{{queue.Number}}</td>
-                    <td>{{queue.User_type}}</td>
-                    <td>{{queue.Parent_name}}</td>
-                    <td>{{queue.Student_name}}</td>
-                    <td>{{queue.Student_id}}</td>
-                    <td>{{queue.Request_type}}</td>
-                    <td>{{queue.Status}}</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" href="/workspace"><i class="fas fa-home"></i> Workspace </a>
+            </li>
+          </ul>
 
-          <div class="accounting-workspace">
-            <h3 class="text-center mt-4"> Accounting </h3>
-            <div class="table-responsive queue-container ">
-              <table class="table table-striped table-sm">
-                <thead>
-                  <tr>
-                    <th>Number</th>
-                    <th>User Type </th>
-                    <th>Parent Name</th>
-                    <th>Student Name</th>
-                    <th>ID</th>
-                    <th>Request Type</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                {% for queue in queues %}
-                <tr>
-                  <td>{{queue.Number}}</td>
-                  <td>{{queue.User_type}}</td>
-                  <td>{{queue.Parent_name}}</td>
-                  <td>{{queue.Student_name}}</td>
-                  <td>{{queue.Student_id}}</td>
-                  <td>{{queue.Request_type}}</td>
-                  <td>{{queue.Status}}</td>
-                </tr>
-                {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </main>
-      </div>
+          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+            <span>Control Flow</span>
+          </h6>
+
+          <ul class="nav flex-column mb-2">
+
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="fas fa-envelope"></i> Recent Requests (1-10) </a>
+            </li>
+
+            <li class="av-item">
+              <a class="nav-link" href="#"><i class="fas fa-archive"></i> Archive </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="fas fa-undo"></i> Undo </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="#"><i class="fas fa-expand-arrows-alt"></i> Reassign </a>
+            </li>
+
+          </ul>
+        </div>
+      </nav>
+
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2">Front Desk Queue</h1>
+        </div>
+
+        <div class="table-responsive queue-container">
+          <table class=" table table-striped table-sm workspace-table">
+            <thead>
+              <tr>
+                <th>Number</th>
+                <th>User Type </th>
+                <th>Parent Name</th>
+                <th>Student Name</th>
+                <th>ID</th>
+                <th>Request Type</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="queue-data"> <!-- There is an id here for me to link it to a script and add data real time--> 
+              {% for queue in queues %}
+              <tr>
+                <td>{{queue.Number}}</td>
+                <td>{{queue.User_type}}</td>
+                <td>{{queue.Parent_name}}</td>
+                <td>{{queue.Student_name}}</td>
+                <td>{{queue.Student_id}}</td>
+                <td>{{queue.Request_type}}</td>
+                <td>{{queue.Status}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+
+
+          <!-- Display No Queue Message -->
+          {% if no_queue %}
+            <h3 class="text-center" id="queue-message">{{no_queue}}</h3>
+          {% endif %}
+
+
+        </div>
+
+      </main>
     </div>
+  </div>
 
-    <!-- Icons -->
-    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
-    <script>
-      feather.replace()
-    </script>
 
 {% endblock %}

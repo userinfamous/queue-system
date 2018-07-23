@@ -16,22 +16,6 @@
   z-index: 1031; /*We don't want the navbar(1030) to appear over on top*/
 }
 
-.queue-container{
-    min-height: 800px;
-    max-height:800px;
-    overflow-y: auto;
-    width:90%;
-    margin-left: 40px;
-}
-
-.front-desk-workspace {
-
-}
-.accounting-workspace {
-  margin-top: 100px;
-  margin-bottom: 100px;
-
-}
 
 
 
@@ -73,27 +57,8 @@ inner: an addon for making content under middle class appear a certain way.
 .clear {
   clear:both;
 }
-a.decoration-none {
-  text-decoration: none;
-  color: black;
-}
 
-a.decoration-none:active {
-  text-decoration: underline;
-  color: orange;
-}
-
-
-
-
-
-
-
-
-
-
-
-/* Dashboard Navbar */
+/* Workspace Navbar */
 [role="main"] {
   padding-top: 48px; /* Space for fixed navbar */
 }
@@ -112,20 +77,31 @@ a.decoration-none:active {
   border-radius: 0;
 }
 
-.form-control-dark {
-  color: #fff;
-  background-color: rgba(255, 255, 255, .1);
-  border-color: rgba(255, 255, 255, .1);
+/* Workspace table header fixed top*/
+thead,table.floatThead-table{
+  color: black;
+  background-color: #fff;
 }
 
-.form-control-dark:focus {
-  border-color: transparent;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+.table thead th {
+    border-bottom: none;
+    border-top: none;
 }
 
+/* Queue Container */
+.queue-container{
+    min-height: 600px;
+    max-height: 600px;
+    overflow-y: auto;
+    margin: auto;
+}
 
-
-
+#queue-message {
+  border: 2px solid #d6d6d6;
+  background-color: #d6d6d6;
+  color: #515151;
+  border-radius: 4px;
+}
 
 
 /* Dashboard Sidebar */

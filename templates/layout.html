@@ -14,6 +14,10 @@
     <!-- Web App's personal bootstrap -->
     <link href="/static/styles.css" rel="stylesheet" type="text/css">
 
+    <!-- Icons from Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+
+
     <!-- Specific to certain pages -->
     {% block head %}{% endblock %}
 
@@ -21,6 +25,7 @@
   </head>
 
   <body>
+
         <!-- Flashing messages-->
         {% include 'includes/_message.html' %}
 
@@ -28,13 +33,21 @@
         {% block body %}{% endblock %}
 
 
+
       <!-- Javasripts are placed at the end to load faster -->
       <!-- JQuery-->
       <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
       <!-- Bootstrap  Core Javascrript (Includes poppers.js) -->
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.bundle.min.js" integrity="sha384-CS0nxkpPy+xUkNGhObAISrkg/xjb3USVCwy+0/NMzd5VxgY4CMCyTkItmy5n0voC" crossorigin="anonymous"></script>
+      <!-- Pusher Library -->
+      <script src="https://js.pusher.com/4.2/pusher.min.js"></script>
+      <!-- Making Table Headers stick to the top-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.1.2/jquery.floatThead.js"></script>
       <!-- Adding Personal JQuery onto site-->
       <script src="http://localhost/js/script.js"></script>
+
+
+
 
   </body>
 
