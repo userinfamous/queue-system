@@ -39,15 +39,10 @@
       <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
       <!-- Bootstrap  Core Javascrript (Includes poppers.js) -->
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.bundle.min.js" integrity="sha384-CS0nxkpPy+xUkNGhObAISrkg/xjb3USVCwy+0/NMzd5VxgY4CMCyTkItmy5n0voC" crossorigin="anonymous"></script>
-      <!-- Pusher Library -->
-      <script src="https://js.pusher.com/4.2/pusher.min.js"></script>
-      <!-- Making Table Headers stick to the top-->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.1.2/jquery.floatThead.js"></script>
-      <!-- Adding Personal JQuery onto site-->
+      <!-- Custom JQuery, this one is general for all template so it stays here-->
       <script src="http://localhost/js/script.js"></script>
-
-
-
+      <!-- Custom code -->
+      {% block custom_scripts %}{% endblock %}
 
   </body>
 

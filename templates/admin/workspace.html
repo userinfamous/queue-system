@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+  {% from "includes/_form_helpers.html" import render_field %}
 
   <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/workspace"> School Logo</a>
@@ -53,32 +54,70 @@
       <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
 
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-          <h1 class="h2">Front Desk Queue</h1>
+          <h1 class="h2">{{session.department}} Queue</h1>
         </div>
 
-        <div class="table-responsive queue-container">
-          <table class=" table table-striped table-sm workspace-table">
+        <div id="queue-data" class="table-responsive queue-container">
+          <table  class=" table table-striped table-sm workspace-table">
             <thead>
               <tr>
                 <th>Number</th>
                 <th>User Type </th>
+                <th>Contact </th>
                 <th>Parent Name</th>
                 <th>Student Name</th>
                 <th>ID</th>
                 <th>Request Type</th>
                 <th>Status</th>
+                <th></th>
+                <th></th>
               </tr>
             </thead>
-            <tbody id="queue-data"> <!-- There is an id here for me to link it to a script and add data real time--> 
+            <tbody> <!-- There is an id here for me to link it to a script and add data real time-->
               {% for queue in queues %}
               <tr>
                 <td>{{queue.Number}}</td>
                 <td>{{queue.User_type}}</td>
+                <td>{{queue.Contact}}</td>
                 <td>{{queue.Parent_name}}</td>
                 <td>{{queue.Student_name}}</td>
                 <td>{{queue.Student_id}}</td>
                 <td>{{queue.Request_type}}</td>
-                <td>{{queue.Status}}</td>
+
+                <!-- If the queue is on top -->
+                {% if queue == queues[0] %}
+                <td>
+                  {% if queue.Status != 'In Progress' %}
+                  <form action="{{url_for('entry_call', number=queue.Number)}}" method="post">
+                    <input type="hidden" name="method" value="CALL">
+                    <input type="submit" value="Call Number" class="btn btn-warning">
+                  </form>
+                  {% else %}
+                    {{queue.Status}}
+                  {% endif %}
+                </td>
+                <td align="right">
+                  <form action="" method="post">
+                    {{ render_field(form.Reassign) }}
+                    <input type="submit" value="Reassign" class="btn btn-info">
+                  </form>
+                </td>
+                <td align="left">
+                  {% if queue.Status == 'In Progress' %}
+                  <form action="{{url_for('entry_complete', number=queue.Number)}}" method="post">
+                    <input type="hidden" name="method" value="COMPLETE">
+                    <input type="submit" value="Complete" class="btn btn-success">
+                  </form>
+                </td>
+                {% endif %}
+              {% else %}
+
+              <td></td>
+              <td></td>
+              <td></td>
+
+              {% endif %}
+
               </tr>
               {% endfor %}
             </tbody>
@@ -98,5 +137,26 @@
     </div>
   </div>
 
+{% endblock %}
+
+{% block custom_scripts %}
+
+<!-- Making Table Headers stick to the top (we don't need this on every page)-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.1.2/jquery.floatThead.js"></script>
+
+<!-- Custom Jquert, this one is general for all template so it stays here-->
+<script src="http://localhost/js/workspace.js"></script>
+
+<!-- Ajax for workspace, this is the refresh page (not the activator or the controller page), that is at request_advance.html -->
+<script>
+
+  window.setInterval(function(){
+      if(localStorage.update == "1"){
+          localStorage.update = "0"; // This uses local storage: it should be fine since we're running everything from the same server
+          window.location.reload(true);
+      }
+  }, 500);
+
+</script>
 
 {% endblock %}

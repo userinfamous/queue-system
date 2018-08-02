@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  {% from "includes/_form_helpers.html" import render_field %}
+
+  <div class="outer">
+    <div class="middle">
+      <div class="inner">
+
+        <form method="POST" action="">
+
+          <h3 class="text-center mb-3 pb-3"> {% if session.Selected_language == 'English'%} Please Choose Request Type {% else %} សូមជ្រើសរើស {% endif %} </h3>
+
+          <button id="submit-info-button" type="submit" name="Request_type" value="Information" class="btn btn-info btn-lg btn-block">
+            {% if session.Selected_language == 'English'%} Information {% else %} ព័ត៌មាន {% endif %}
+          </button>
+
+          <button id="submit-info-button" type="submit" name="Request_type" value="Enrollment" class="btn btn-info btn-lg btn-block">
+            {% if session.Selected_language == 'English'%} Enrollment {% else %} ចុះឈ្មោះចូលរៀន {% endif %}
+          </button>
+
+          <button id="submit-info-button" type="submit" name="Request_type" value="Tuition Fee" class="btn btn-info btn-lg btn-block">
+            {% if session.Selected_language == 'English'%} Tuition Fee {% else %} បង់ថ្លៃសិក្សា {% endif %}
+          </button>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block custom_scripts %}
+
+<!-- Ajax: This is the controller page script to activate refresh on workspace -->
+<script>
+  localStorage.setItem("update", "0");
+
+  $('body').on('click', '#submit-info-button', function(){
+      localStorage.setItem("update", "1");
+  });
+</script>
+
+{% endblock %}
