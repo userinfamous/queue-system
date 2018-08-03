@@ -83,7 +83,7 @@ def request_basic():
         #Close connection to server
         cur.close()
         #Record student name
-        session["Student_name"] = data["Student_name
+        session["Student_name"] = data["Student_name"]
         #Request advance enqires user about request type
         return redirect(url_for('request_advance'))
     return render_template('enduser/request_basic.html',form=form)
@@ -91,6 +91,7 @@ def request_basic():
 #Enduser fourth page. Filling out the forms.
 @app.route('/request_advance',methods=['GET','POST'])
 def request_advance():
+    #If End-User select a request_type
     if request.method == 'POST':
         #Get the request type
         request_type = request.form["Request_type"]
@@ -98,14 +99,14 @@ def request_advance():
         cur = mysql.connection.cursor()
         #Get Recent Student_name
         recent = cur.execute("SELECT * FROM total_queue WHERE Student_name=%s", [session['Student_name']])
-        #Pop it off, since we no longer need it
-        session.pop('Student_name',None)
         #Get that student number or current postion in the queue (its important for workspace to keep track of this queue position)
         number = cur.fetchone()["Number"]
+        #Pop it off, since we no longer need it
+        session.pop('Student_name',None)
         #Set inside the variables table, that position in the queue
         cur.execute("UPDATE variables SET NUMBER=%s", [number])
         #Update total_queue, the Request_type using current queue position
-        cur.execute("UPDATE total_queue SET Request_type=%s WHERE Student_name=%s",([request_type],[number]))
+        cur.execute("UPDATE total_queue SET Request_type=%s WHERE Number=%s",([request_type],[number]))
         #Select all from request_types table where the Request_type is equal to the current request_type
         results = cur.execute("SELECT * FROM request_types WHERE Request_type=%s",[request_type])
         #Get department under that request type
@@ -123,78 +124,84 @@ def request_advance():
         flash("Request Completed !", "success")
         #Return to index
         return redirect(url_for('select_language'))
-
     return render_template('enduser/request_advance.html')
 
 #Admin Registeration page, can technically be accessed by anyone
 @app.route('/register',methods=['GET','POST'])
 def register():
+    #Make a register form class object and pass in request data from template to the object
     form = RegisterForm(request.form)
+    #if admin pressed submit and everything is validated
     if request.method == 'POST' and form.validate():
+        #Get data from form if that is the case
         Name = form.Name.data
         Email = form.Email.data
         Username = form.Username.data
         Password = sha256_crypt.encrypt(str(form.Password.data))
         Department = form.Department.data
-
         #Create DictCursor
         cur = mysql.connection.cursor()
-
+        #Insert into admins table
         cur.execute("""INSERT INTO admins(Name, Email, Username, Password, Department)
         VALUES(%s, %s, %s, %s, %s)""", (Name, Email, Username, Password, Department))
-
-        #commit to DB
+        #Commit to database
         mysql.connection.commit()
-
         #Close connection
         cur.close()
-
         #Flash message
         flash("Registered as Admin !", "success")
-
+        #Redirect to login after registerred
         return redirect(url_for('login'))
     return render_template('admin/register.html', form=form)
 
-#admin login
+#Admin login
 @app.route('/login', methods=['GET','POST'])
 def login():
+    #if admin presses submits
     if request.method == 'POST':
+        #Get username and password
         Username = request.form['Username']
         Password_Candidate = request.form['Password']
-
+        #Connect to MySQL server
         cur = mysql.connection.cursor()
-
+        #Get all entries from admins through username
         results = cur.execute("SELECT * FROM admins WHERE Username=%s", [Username])
-
+        #if there is an entry of match
         if results > 0:
+            #fetch the first one that closest to the query
             data = cur.fetchone()
+            #scrape data from entry
             Password = data['Password']
             Department = data['Department']
-
+            #check for password from the entry
             if sha256_crypt.verify(Password_Candidate, Password):
-
-                #Logged in
+                #if the password match, then log the user in
                 session['logged_in'] = True
                 session['username'] = Username
                 session['department'] = Department
-
+                #flash message
                 flash("You are now logged in !  (◠‿◠✿)", 'success')
+                #redirect to workspace
                 return redirect(url_for('workspace'))
             else:
+                #flash error message
                 error = 'Invalid Credentials. (◡︿◡✿)'
+                #render login with error
                 return render_template('admin/login.html',error=error)
-
+            #close connection
             cur.close()
         else:
+            #flash error user not found in database
             error = 'Username Not Found. ↁ_ↁ'
+            #render login with error
             return render_template('admin/login.html',error=error)
-
     return render_template('admin/login.html')
 
 #admin logout
 @app.route('/logout')
 @login_required
 def logout():
+    #clear everything from session
     session.clear()
     flash('You are now logged out.', 'success')
     return redirect(url_for('login'))
@@ -206,122 +213,121 @@ def logout():
 def workspace():
     #loading form class
     form = WorkspaceForm(request.form)
-
     #connect to database
     cur = mysql.connection.cursor()
-
-    #Select all data points from associated workspace
-    results = cur.execute("""SELECT total_queue.Number, total_queue.User_type, total_queue.Request_type, total_queue.Parent_name, total_queue.Student_name, total_queue.Student_id, total_queue.Contact, total_queue.Status
+    #Select all data from associated workspace
+    results = cur.execute("""SELECT total_queue.User_type, total_queue.Request_type, total_queue.Parent_name, total_queue.Student_name, total_queue.Student_id, total_queue.Contact, total_queue.Status
     FROM total_queue JOIN (request_types)
     ON (total_queue.Request_type = request_types.Request_type)
     WHERE request_types.Department = %s AND total_queue.Status != %s """, (session["department"], 'Completed'))
-
-    #Reassign
-    if request.method == 'POST':
-        #get variable
+    #if admin presses reassign button
+    if request.method == 'POST' and form.validate():
+        #Get request_type from reassign form
         Reassign = form.Reassign.data
-
-        #fetch number
+        #Select number from the variables table (there's only one entry)
         cur.execute("SELECT NUMBER FROM variables")
+        #Fetch the number from the NUMBER column
         number = cur.fetchone()["NUMBER"]
-
-        #Reassign
+        #Update the request type which will display it to a different department
         cur.execute("UPDATE total_queue SET Request_type=%s WHERE Number=%s",([Reassign],[number]))
-
-        #fetch new department
+        #Select all from request types table where data in column matches with the request type
         data = cur.execute("SELECT * FROM request_types WHERE Request_type=%s", [Reassign])
+        #Fetch the department related to the request type
         department = cur.fetchone()["Department"]
-
-        #Inser number into database
+        #Check for department the reassign data is related to
         if department == "Front Desk":
+            #Select all from front_desk_queue table where there's a number
             results = cur.execute("SELECT * FROM front_desk_queue WHERE Number=%s",[number])
+            #if there isn't an entry yet
             if results == 0:
+                #Then create one
                 cur.execute("INSERT INTO front_desk_queue(Number) VALUES(%s)",[number])
+                #While cutting short the time out for the other department
                 cur.execute("UPDATE accounting_queue SET Time_out=NOW(), Time_diff=(Time_out - Time_in) WHERE Number=%s", [number])
             else:
+                #If its still in the same department then just update the time in
                 cur.execute("UPDATE front_desk_queue SET Time_in=NOW() WHERE Number=%s", [number])
+        #Check for department the reassign data is related to
         elif department == "Accounting":
+            #Select all from accounting_queue table where there's a number
             results = cur.execute("SELECT * FROM accounting_queue WHERE Number=%s",[number])
+            #if there isn't an entry yet
             if results == 0:
+                #Then create one
                 cur.execute("INSERT INTO accounting_queue(Number) VALUES(%s)",[number])
+                #While cutting short the time out for the other department
                 cur.execute("UPDATE front_desk_queue SET Time_out=NOW(), Time_diff=(Time_out - Time_in) WHERE Number=%s", [number])
             else:
+                #If its still in the same department then just update the time in
                 cur.execute("UPDATE accounting_queue SET Time_in=NOW() WHERE Number=%s", [number])
-
-        #flash message
+        #flash debug message
         flash(number,"success")
-
-        #commit to DB
+        #Commit to database
         mysql.connection.commit()
         #flash message
         flash('Entry Reassigned! ', 'success')
-        #return to dashboard
+        #return to workspace after reassign
         return redirect(url_for('workspace'))
-
-    #Fetch everything found
+    #Fetch everything found, the reason why its after POST reassign is to update the changes we make
     queues = cur.fetchall()
-
-    #if there is queue
+    #If there's something to display then display
     if results > 0:
         return render_template('admin/workspace.html',queues=queues,form=form)
+    #Say that there is nothing to display
     else:
         no_queue = " No Queue "
         return render_template('admin/workspace.html',no_queue=no_queue)
-
     #close the connection
     cur.close()
 
-#admin call
+#Admin calling queue, there's string number because it takes the argument of number from <string:number>
 @app.route('/entry_call/<string:number>', methods=['POST'])
 @login_required
 def entry_call(number):
     #Create dictionary cursor
     cur = mysql.connection.cursor()
-
-    #Execute, delete and insert
+    #Update total_queue Set Status to be In Progress
     cur.execute("UPDATE total_queue SET Status=%s WHERE Number=%s",("In Progress",[number] ))
-
-    #commit to DB
+    #Commit to database
     mysql.connection.commit()
-
     #Close connection
     cur.close()
-
     #flash message
     flash('Entry Called! ', 'success')
-
-    #return to dashboard
+    #return to workspace
     return redirect(url_for('workspace'))
 
-#admin store to archive
+#Admin completes a queue
 @app.route('/entry_complete/<string:number>', methods=['POST'])
 @login_required
 def entry_complete(number):
     #Create dictionary cursor
     cur = mysql.connection.cursor()
-
     #Execute, delete and insert
     cur.execute("UPDATE total_queue SET Status=%s WHERE Number=%s",('Completed',[number]))
-
-    #check for deparment to include timestamp (going out) in
+    #Check for deparment to include timestamp (going out) in
     if session["department"] == "Front Desk":
         cur.execute("UPDATE front_desk_queue SET Time_out=NOW(), Time_diff=(Time_out - Time_in) WHERE Number=%s",[number])
     elif session["department"] == "Accounting":
         cur.execute("UPDATE accounting_queue SET Time_out=NOW(), Time_diff=(Time_out - Time_in) WHERE Number=%s",[number])
-
+    #Select all from front_desk_queue table where number is same (which is only one since its primary)
     result1 = cur.execute("SELECT * FROM front_desk_queue WHERE Number=%s",[number])
+    #If there is one
     if result1 > 0:
+        #Fetch the time difference
         time1 = cur.fetchone()["Time_diff"]
     else:
+        #If there isn't, let it be 0
         time1 = timedelta(0,0)
+    #Select all from accounting_queue table where number is same (which is only one since its primary)
     result2= cur.execute("SELECT * FROM accounting_queue WHERE Number=%s",[number])
+    #If there is one
     if result2 > 0:
         time2 = cur.fetchone()["Time_diff"]
     else:
         time2 = timedelta(0,0)
-
+    #Update
     cur.execute("UPDATE total_queue SET Total_time = %s WHERE number=%s",([time1+time2],[number]))
-
     #commit to DB
     mysql.connection.commit()
 
@@ -388,5 +394,6 @@ class RegisterForm(Form):
     )
 
 
+# if name of app is main
 if __name__ == '__main__':
     app.run(debug = True)
