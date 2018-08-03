@@ -88,28 +88,38 @@
                 {% if queue == queues[0] %}
                 <td>
                   {% if queue.Status != 'In Progress' %}
-                  <form action="{{url_for('entry_call', number=queue.Number)}}" method="post">
+
+                  <form action="{{url_for('entry_call', number=queue.Number)}}" method="POST">
                     <input type="hidden" name="method" value="CALL">
                     <input type="submit" value="Call Number" class="btn btn-warning">
                   </form>
-                  {% else %}
+
+                  {% else %} <!-- If status is in progress or admin pressed Call Number, load the reassign table -->
                     {{queue.Status}}
-                  {% endif %}
                 </td>
+
+                <!-- This might confuse you, but we want to load a whole table when as the above, we just want the data -->
                 <td align="right">
-                  <form action="" method="post">
-                    {{ render_field(form.Reassign) }}
+                  <form action="" method="POST">
+                    <div class="form-group">
+                      {{ render_field(form.Reassign, class="form-control") }}
+                    </div>
                     <input type="submit" value="Reassign" class="btn btn-info">
                   </form>
                 </td>
+
+                {% endif %}
+
                 <td align="left">
                   {% if queue.Status == 'In Progress' %}
-                  <form action="{{url_for('entry_complete', number=queue.Number)}}" method="post">
+                  <form action="{{url_for('entry_complete', number=queue.Number)}}" method="POST">
                     <input type="hidden" name="method" value="COMPLETE">
                     <input type="submit" value="Complete" class="btn btn-success">
                   </form>
                 </td>
+
                 {% endif %}
+
               {% else %}
 
               <td></td>
@@ -123,13 +133,10 @@
             </tbody>
           </table>
 
-
-
           <!-- Display No Queue Message -->
           {% if no_queue %}
             <h3 class="text-center" id="queue-message">{{no_queue}}</h3>
           {% endif %}
-
 
         </div>
 
@@ -151,7 +158,7 @@
 <script>
 
   window.setInterval(function(){
-      if(localStorage.update == "1"){
+      if (localStorage.update == "1") {
           localStorage.update = "0"; // This uses local storage: it should be fine since we're running everything from the same server
           window.location.reload(true);
       }

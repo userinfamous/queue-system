@@ -8,6 +8,8 @@
 # NOTE:
 # lower case session["text"] or cookies refer to the admin
 # Upper case cookies refer to the end user
+# MySQL cursor allows us to traverse and manipulate the database, it is also dictionary based
+# Each department has got their own table (i.e accounting_queue and front_desk_queue) It's for recording time in and time out in the respective deparment
 
 #Importing necessary dependencies for the project
 from flask import Flask, render_template, redirect, flash, url_for, request, session, logging
@@ -34,117 +36,91 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 #Initialize MySQL
 mysql = MySQL(app)
 
-#Enduser first page (select language)
+#End-User first page (select language)
 @app.route('/',methods=['GET','POST'])
 def select_language():
+    #if End-User selected a language
     if request.method == 'POST':
+        #Record Language
         session["Selected_language"] = request.form["Selected_language"]
+        #Show debug message
         flash('Selected ' + str(session["Selected_language"] + ' language'), "success")
+        #rediect to the next page
         return redirect(url_for('select_user_type'))
     return render_template('enduser/select_language.html')
 
-#Enduser second page. Select (parent/student/visitor)
+
+#End-User second page. Select user type from (parent/student/visitor)
 @app.route('/select_user_type',methods=['GET','POST'])
 def select_user_type():
+    #if End-User selected a user type
     if request.method == 'POST':
+        #Record User type
         session["User_type"] = request.form["User_type"]
+        #Show debug message
         flash('Selected ' + str(session["User_type"] + ' Form'), "success")
+        #Redirect to the next page
         return redirect(url_for('request_basic'))
     return render_template('enduser/select_user_type.html')
 
 
-#Enduser third page. Filling out the forms.
+#End-User third page. Filling out the forms.
 @app.route('/request_basic',methods=['GET','POST'])
 def request_basic():
-
-    #Assimulat the classes proerties to be passed into template
+    #Make a request form class object and pass in request data from template to the object
     form = RequestForm(request.form)
-
-    #If enduser press confirm
+    #If enduser presses confirm to submit the form
     if request.method == 'POST':
-        #Loaded script from helpers to reduce messiness
-        Data = collect_form_data(form)
-
-        #Create a dictionary cursor
+        #Pass form into a function that handles translation from data receieved
+        data = collect_form_data(form)
+        #Connect to MySQL server and traverse the database with a dictionary cursor
         cur = mysql.connection.cursor()
-
-        #Check for duplicates
-        check = cur.execute("SELECT * FROM total_queue WHERE Student_name=%s",[Data['Student_name']] )
-
-        #If there is any
-        if check > 0:
-            #Flask message
-            flash("Request Failed Duplicates Sent !", "danger")
-            #Close connection
-            cur.close()
-            #Return, assume queue already exists (Assuming no two students with the same name happen to be in the sane queue)
-            return redirect(url_for('select_language'))
-
         #Update the database
         cur.execute("""INSERT INTO total_queue(User_type,Parent_name, Student_name, Student_id, Contact)
-        VALUES(%s, %s, %s, %s, %s)""", (session["User_type"], Data['Parent_name'], Data['Student_name'], Data['Student_id'],  Data['Contact']))
-
-        #commit to DB
+        VALUES(%s, %s, %s, %s, %s)""", (session["User_type"], data['Parent_name'], data['Student_name'], data['Student_id'],  data['Contact']))
+        #Commit to the database
         mysql.connection.commit()
-
-        #getting current number of queues
-        results = cur.execute("SELECT * FROM total_queue")
-
-        #Close connection
+        #Close connection to server
         cur.close()
-
-        #get session student name for request type
-        session["Student_name"] = Data["Student_name"]
-
+        #Record student name
+        session["Student_name"] = data["Student_name
         #Request advance enqires user about request type
         return redirect(url_for('request_advance'))
-
     return render_template('enduser/request_basic.html',form=form)
 
 #Enduser fourth page. Filling out the forms.
 @app.route('/request_advance',methods=['GET','POST'])
 def request_advance():
-
     if request.method == 'POST':
         #Get the request type
-        Request_type = request.form["Request_type"]
-
-        #Create a dictionary cursor
+        request_type = request.form["Request_type"]
+        #Connect to MySQL server and traverse the database with a dictionary cursor
         cur = mysql.connection.cursor()
-
-        #get newest enduser number
+        #Get Recent Student_name
         recent = cur.execute("SELECT * FROM total_queue WHERE Student_name=%s", [session['Student_name']])
+        #Pop it off, since we no longer need it
+        session.pop('Student_name',None)
+        #Get that student number or current postion in the queue (its important for workspace to keep track of this queue position)
         number = cur.fetchone()["Number"]
-
-        cur.execute("UPDATE variables SET NUMBER=%s", [number] )
-
-        #Execute SQL
-        cur.execute("UPDATE total_queue SET Request_type=%s WHERE Student_name=%s",(Request_type,session["Student_name"]))
-
-        #if there is the Request_type belongs to any of the department
-        results = cur.execute("SELECT * FROM request_types WHERE Request_type=%s",[Request_type])
+        #Set inside the variables table, that position in the queue
+        cur.execute("UPDATE variables SET NUMBER=%s", [number])
+        #Update total_queue, the Request_type using current queue position
+        cur.execute("UPDATE total_queue SET Request_type=%s WHERE Student_name=%s",([request_type],[number]))
+        #Select all from request_types table where the Request_type is equal to the current request_type
+        results = cur.execute("SELECT * FROM request_types WHERE Request_type=%s",[request_type])
+        #Get department under that request type
         department = cur.fetchone()["Department"]
-
-        #update variables
-        cur.execute("UPDATE variables SET DEPARTMENT=%s",[department])
-
+        #Do a check for whichever department and insert into that department's table (each department has got their own table to check for time and time out)
         if department == 'Front Desk':
             cur.execute("INSERT INTO front_desk_queue(Number) VALUES(%s)",[number]) #record time in
         elif department == 'Accounting':
             cur.execute("INSERT INTO accounting_queue(Number) VALUES(%s)",[number])  #record time in
-
-        #pop off, since we no longer need it
-        session.pop('Student_name',None)
-
-        #commit to DB
+        #Commit to Database
         mysql.connection.commit()
-
         #Close connection
         cur.close()
-
         #Flask message
         flash("Request Completed !", "success")
-
         #Return to index
         return redirect(url_for('select_language'))
 
@@ -255,9 +231,6 @@ def workspace():
         #fetch new department
         data = cur.execute("SELECT * FROM request_types WHERE Request_type=%s", [Reassign])
         department = cur.fetchone()["Department"]
-
-        #update department variable to new deparment
-        cur.execute("UPDATE variables SET DEPARTMENT=%s",[department])
 
         #Inser number into database
         if department == "Front Desk":
@@ -391,8 +364,6 @@ class WorkspaceForm(Form):
     Reassign = SelectField( '',
         choices = [(-1,'<Select Request Type>'),('Information','Information'), ('Enrollment','Enrollment'), ('Tuition Fee','Tuition Fee')]
     )
-
-
 
 #register form class
 class RegisterForm(Form):
