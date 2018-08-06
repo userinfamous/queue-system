@@ -16,10 +16,6 @@
   z-index: 1031; /*We don't want the navbar(1030) to appear over on top*/
 }
 
-
-
-
-
 /* Vertical center alignment
 outer: is for differentiating between middle and center, absolute position relative to body (the parent ancestor position).
 middle: it works thanks to the help of table display, the vertical-align attribute works as what people expect but only in table like displays such as below.
@@ -103,6 +99,15 @@ thead,table.floatThead-table{
   border-radius: 4px;
 }
 
+#display-name {
+  font-size: 6vw;
+}
+#display-title {
+  font-size: 5vw;
+}
+#display-subtitle {
+  font-size: 4vw;
+}
 
 /* Dashboard Sidebar */
 .sidebar {

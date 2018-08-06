@@ -99,9 +99,7 @@
                 <!-- This might confuse you, but we want to load a whole table when as the above, we just want the data -->
                 <td align="right">
                   <form action="" method="POST">
-                    <div class="form-group">
-                      {{ render_field(form.Reassign, class="form-control") }}
-                    </div>
+                    {{ render_field(form.Reassign, class="submit-button") }}
                     <input type="submit" value="Reassign" class="btn btn-info">
                   </form>
                 </td>

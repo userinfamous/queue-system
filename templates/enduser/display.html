@@ -3,9 +3,21 @@
 {% block body %}
 <div class="outer">
   <div class=" middle text-center">
-    <div class="inner">
-    <h1> {{}} </h1>
-    </div>
+
+    <div id="display-title"><p>Display(Temporary)</p></div>
+
+    {% for queue in queues %}
+      {% if queue.Parent_name %}
+    <div id="display-subtitle"><p>Please go to {{queue.Department}} Department :</p></div>
+    <div id="display-name"><p>{{queue.Parent_name}}</p></div>
+
+      {% else %}
+    <div id="display-subtitle"><p>Please go to {{queue.Department}} Department :</p></div>
+    <div id="display-name"><p>{{queue.Student_name}}</p></div>
+
+      {% endif %}
+    {% endfor %}
+
   </div>
 </div>
 {% endblock %}

@@ -84,6 +84,7 @@ def request_basic():
         cur.close()
         #Record student name
         session["Student_name"] = data["Student_name"]
+        session["Parent_name"] = data["Parent_name"]
         #Request advance enqires user about request type
         return redirect(url_for('request_advance'))
     return render_template('enduser/request_basic.html',form=form)
@@ -97,14 +98,17 @@ def request_advance():
         request_type = request.form["Request_type"]
         #Connect to MySQL server and traverse the database with a dictionary cursor
         cur = mysql.connection.cursor()
-        #Get Recent Student_name
-        recent = cur.execute("SELECT * FROM total_queue WHERE Student_name=%s", [session['Student_name']])
+        #if student
+        if session["User_type"] == "Student":
+            #Get Recent Student_name
+            recent = cur.execute("SELECT * FROM total_queue WHERE Student_name=%s", [session['Student_name']])
+        else:
+            #Get parent name
+            recent = cur.execute("SELECT * FROM total_queue WHERE Parent_name=%s", [session['Parent_name']])
         #Get that student number or current postion in the queue (its important for workspace to keep track of this queue position)
         number = cur.fetchone()["Number"]
         #Pop it off, since we no longer need it
         session.pop('Student_name',None)
-        #Set inside the variables table, that position in the queue
-        cur.execute("UPDATE variables SET NUMBER=%s", [number])
         #Update total_queue, the Request_type using current queue position
         cur.execute("UPDATE total_queue SET Request_type=%s WHERE Number=%s",([request_type],[number]))
         #Select all from request_types table where the Request_type is equal to the current request_type
@@ -206,7 +210,6 @@ def logout():
     flash('You are now logged out.', 'success')
     return redirect(url_for('login'))
 
-
 #admin workspace
 @app.route('/workspace', methods=['GET','POST'])
 @login_required
@@ -216,7 +219,7 @@ def workspace():
     #connect to database
     cur = mysql.connection.cursor()
     #Select all data from associated workspace
-    results = cur.execute("""SELECT total_queue.User_type, total_queue.Request_type, total_queue.Parent_name, total_queue.Student_name, total_queue.Student_id, total_queue.Contact, total_queue.Status
+    results = cur.execute("""SELECT *
     FROM total_queue JOIN (request_types)
     ON (total_queue.Request_type = request_types.Request_type)
     WHERE request_types.Department = %s AND total_queue.Status != %s """, (session["department"], 'Completed'))
@@ -224,10 +227,10 @@ def workspace():
     if request.method == 'POST' and form.validate():
         #Get request_type from reassign form
         Reassign = form.Reassign.data
-        #Select number from the variables table (there's only one entry)
-        cur.execute("SELECT NUMBER FROM variables")
+        #Select number from the total_queue table, fetch the one on top to reassign
+        cur.execute("SELECT * FROM total_queue WHERE Status = %s",["In Progress"])
         #Fetch the number from the NUMBER column
-        number = cur.fetchone()["NUMBER"]
+        number = cur.fetchone()["Number"]
         #Update the request type which will display it to a different department
         cur.execute("UPDATE total_queue SET Request_type=%s WHERE Number=%s",([Reassign],[number]))
         #Select all from request types table where data in column matches with the request type
@@ -280,6 +283,23 @@ def workspace():
     #close the connection
     cur.close()
 
+#Display number
+@app.route('/display' ,methods=['GET','POST'])
+def display():
+    #Create dictionary cursor
+    cur = mysql.connection.cursor()
+    #Select number in-progress
+    results = cur.execute("""SELECT *
+    FROM total_queue JOIN (request_types)
+    ON (total_queue.Request_type = request_types.Request_type)
+    WHERE Status=%s""",["In Progress"])
+    #fetch all
+    queues = cur.fetchall()
+    #Close connection
+    cur.close()
+    #display
+    return render_template("enduser/display.html",queues=queues)
+
 #Admin calling queue, there's string number because it takes the argument of number from <string:number>
 @app.route('/entry_call/<string:number>', methods=['POST'])
 @login_required
@@ -323,23 +343,21 @@ def entry_complete(number):
     result2= cur.execute("SELECT * FROM accounting_queue WHERE Number=%s",[number])
     #If there is one
     if result2 > 0:
+        #Fetch the time difference
         time2 = cur.fetchone()["Time_diff"]
     else:
+        #If there isn't, let it be 0
         time2 = timedelta(0,0)
     #Update
     cur.execute("UPDATE total_queue SET Total_time = %s WHERE number=%s",([time1+time2],[number]))
-    #commit to DB
+    #commit to Database
     mysql.connection.commit()
-
     #Close connection
     cur.close()
-
-    #flash message
+    #flash debug message
     flash('Entry Completed! ', 'success')
-
     #return to dashboard
     return redirect(url_for('workspace'))
-
 
 #request form class
 class RequestForm(Form):
@@ -392,7 +410,6 @@ class RegisterForm(Form):
     Department = SelectField( 'Select Department',
         choices = [(-1,'<Select Department>'),('Accounting','Accounting Department'), ('Front Desk','Front Desk'), ('IT','IT Department')]
     )
-
 
 # if name of app is main
 if __name__ == '__main__':

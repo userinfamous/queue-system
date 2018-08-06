@@ -70,6 +70,5 @@ def collect_form_data(form):
             else:
                 Contact = form.kh_Contact.data
 
-        Student_name = form.kh_Student_name.data
 
     return {'Parent_name':Parent_name, 'Student_name':Student_name, 'Student_id':Student_id, 'Contact':Contact}
