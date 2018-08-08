@@ -461,4 +461,4 @@ class RegisterForm(Form):
 
 # if name of app is main
 if __name__ == '__main__':
-    app.run(host="0.0.0.0",port="80",debug = True)
+    app.run(host="0.0.0.0",port="88",debug = True)
