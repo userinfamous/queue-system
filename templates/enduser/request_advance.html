@@ -5,40 +5,42 @@
 
   <div class="outer">
     <div class="middle">
-      <div class="container inner">
+      <div class="container">
 
         <form method="POST" action="">
 
           <h3 class="text-center mb-3 pb-3"> {% if session.Selected_language == 'English'%} Please Choose a Request Type
           {% elif session.Selected_language == 'Khmer' %} សូមជ្រើសរើស {% endif %} </h3>
 
-          {% if user_type == 'Parent' %}
+          {% if session.user_type == 'Parent' %}
           <div class="row">
-            <div class="col-sm-4 text-center mb-3">{{render_field(form.Parent_FrontDesk,class="form-control")}}</div>
-            <div class="col-sm-4 text-center mb-3">{{render_field(form.Parent_Accounting,class="form-control")}}</div>
-            <div class="col-sm-4 text-center mb-3">{{render_field(form.Parent_Academic,class="form-control")}}</div>
+            <div class="col-sm-4 text-center mb-3"><h4>Front Desk</h4>{{render_field(form.Parent_FrontDesk,class="form-control")}}</div>
+            <div class="col-sm-4 text-center mb-3"><h4>Accounting</h4>{{render_field(form.Parent_Accounting,class="form-control")}}</div>
+            <div class="col-sm-4 text-center mb-3"><h4>Academic</h4>{{render_field(form.Parent_Academic,class="form-control")}}</div>
           </div>
-          {% elif user_type == 'Student' %}
+          {% elif session.user_type == 'Student' %}
           <div class="row">
-            <div class="col-sm-4 text-center mt-3">{{render_field(form.Student_FrontDesk,class="form-control")}}</div>
-            <div class="col-sm-4 text-center mt-3">{{render_field(form.Student_Accounting,class="form-control")}}</div>
-            <div class="col-sm-4 text-center mt-3">{{render_field(form.Student_Academic,class="form-control")}}</div>
+            <div class="col-sm-4 text-center mt-3"><h4>Front Desk</h4>{{render_field(form.Student_FrontDesk,class="form-control")}}</div>
+            <div class="col-sm-4 text-center mt-3"><h4>Accounting</h4>{{render_field(form.Student_Accounting,class="form-control")}}</div>
+            <div class="col-sm-4 text-center mt-3"><h4>Academic</h4>{{render_field(form.Student_Academic,class="form-control")}}</div>
           </div>
-          {% elif user_type == 'Visitor' %}
+          {% elif session.user_type == 'Visitor' %}
           <div class="row">
-            <div class="col-sm-6 text-center mt-3 pb-3">{{render_field(form.Visitor_FrontDesk,class="form-control")}}</div>
-            <div class="col-sm-6 text-center mt-3 pb-3">{{render_field(form.Visitor_Accounting,class="form-control")}}</div>
+            <div class="col-sm-6 text-center mt-3 pb-3"><h4>Front Desk</h4>{{render_field(form.Visitor_FrontDesk,class="form-control")}}</div>
+            <div class="col-sm-6 text-center mt-3 pb-3"><h4>Accounting</h4>{{render_field(form.Visitor_Accounting,class="form-control")}}</div>
           </div>
           {% endif %}
 
           <!-- Submit Button -->
           {% if session.Selected_language == 'English' %} <!-- If user picked english-->
             <div class="box mt-4">
-              <input id="submit-info-button" type="submit" class="btn btn-primary submit-button " value="Confirm">
+              <input id="submit-info-button" type="submit" class="btn btn-danger submit-button mr-2 " name="Back" value="Back">
+              <input id="submit-info-button" type="submit" class="btn btn-primary submit-button ml-2" name="Confirm" value="Confirm">
             </div>
           {% else %}
             <div class="box mt-4">
-              <input id="submit-info-button" type="submit" class="btn btn-primary submit-button " value="បហ្ជាក់">
+              <input id="submit-info-button" type="submit" class="btn btn-primary submit-button mr-2" name="Back" value="ត្រឡប់​ក្រោយ">
+              <input id="submit-info-button" type="submit" class="btn btn-primary submit-button ml-2"  name="Confirm" value="បហ្ជាក់">
             </div>
           {% endif %}
 

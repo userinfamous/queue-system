@@ -19,6 +19,11 @@
           <button type="submit" name="User_type" value="Visitor" class="btn btn-info btn-lg btn-block">
             {% if session.Selected_language == 'English'%} Visitor {% elif session.Selected_language == 'Khmer' %} ផ្ញ្យេវ {% endif %}
           </button>
+
+          <div class="box mt-4">
+            <input type="button" class="btn btn-danger submit-button mr-2" onclick="history.back();" value="Back">
+          </div>
+
         </form>
       </div>
     </div>

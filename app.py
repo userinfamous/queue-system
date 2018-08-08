@@ -94,7 +94,18 @@ def request_advance():
     #Make a request form class object and pass in request data from template to the object
     form = RequestAdvanceForm(request.form)
     #If End-User select a request_type
-    if request.method == 'POST':
+    if request.method == 'POST' and request.form.get("Back"):
+        cur = mysql.connection.cursor()
+        if session["user_type"] == 'Student':
+            cur.execute("DELETE FROM total_queue WHERE Student_name=%s LIMIT 1",[session["Student_name"]])
+        elif session["user_type"] == 'Parent' or session["user_type"] == 'Visitor':
+            cur.execute("DELETE FROM total_queue WHERE Parent_name=%s LIMIT 1",[session["Parent_name"]])
+        mysql.connection.commit()
+        cur.close()
+        return redirect(url_for('request_basic'))
+
+    elif request.method == 'POST' and request.form.get("Confirm"):
+        number = 0
 
         if session["user_type"] == 'Student':
             request_list = [form.Student_Academic.data,form.Student_Accounting,form.Student_FrontDesk.data]
@@ -104,30 +115,28 @@ def request_advance():
             request_list = [form.Parent_Academic.data,form.Parent_FrontDesk.data,form.Parent_Accounting.data]
         else:
             error = "Unable to recognize user type."
-            render_template('enduser/select_language',error)
+            render_template('enduser/select_language.html',form=form,error=error)
 
-        for request in request_list:
-            if request:
+        for request_entry in request_list:
+            if request_entry != "-1":
                 #Get the request type
-                request_type = request
+                request_type = request_entry
                 number += 1
         if number > 1:
             error = "Please Don't Select more than one Request Type!"
-            return render_template('enduser/request_advance',error=error)
-
-
-
+            return render_template('enduser/request_advance.html',form=form,error=error)
 
         #Connect to MySQL server and traverse the database with a dictionary cursor
         cur = mysql.connection.cursor()
         #if student
         if session["user_type"] == "Student":
             #Get Recent Student_name
-            recent = cur.execute("SELECT * FROM total_queue WHERE Student_name=%s", [session['Student_name']])
-        else:
+            recent = cur.execute("SELECT * FROM total_queue WHERE Student_name=%s", [session["Student_name"]])
+        #check to make sure
+        elif session["user_type"] == "Parent" or session["user_type"] == "Visitor":
             #Get parent name
-            recent = cur.execute("SELECT * FROM total_queue WHERE Parent_name=%s", [session['Parent_name']])
-        #Get that student number or current postion in the queue (its important for workspace to keep track of this queue position)
+            recent = cur.execute("SELECT * FROM total_queue WHERE Parent_name=%s", [session["Parent_name"]])
+        #Get that student number or current postion in the queue
         number = cur.fetchone()["Number"]
         #Pop it off, since we no longer need it
         session.pop('Student_name',None)
@@ -202,9 +211,9 @@ def login():
             #check for password from the entry
             if sha256_crypt.verify(Password_Candidate, Password):
                 #if the password match, then log the user in
-                session['logged_in'] = True
-                session['username'] = Username
-                session['department'] = Department
+                session["logged_in"] = True
+                session["username"] = Username
+                session["department"] = Department
                 #flash message
                 flash("You are now logged in !  (◠‿◠✿)", 'success')
                 #redirect to workspace
@@ -412,28 +421,28 @@ class WorkspaceForm(Form):
     )
 
 class RequestAdvanceForm(Form):
-    Student_FrontDesk = SelectField('Front Desk:',
+    Student_FrontDesk = SelectField('',
         choices = [(-1, '<Select Request Type>'),('Late Slip','Late Slip'),('Leave Early','Leave Early'),('Reenrollment','Reenrollment'),
         ('Lost and Found','Lost and Found'),('General Enquiry','General Enquiry')])
-    Student_Academic = SelectField('Academics Department',
+    Student_Academic = SelectField('',
         choices = [(-1, '<Select Request Type>'),('Transcript/Report Card','Transcript/Report Card'),('Academic Paperwork','Academic Paperwork'),
         ('Enquiry','Enquiry')])
-    Student_Accounting = SelectField('Accounting Department',
+    Student_Accounting = SelectField('',
         choices = [(-1, '<Select Request Type>'),('Payment','Payment')])
 
-    Parent_FrontDesk = SelectField('Front Desk',
-        choices = [(-1, '<Select Request Type>'),('Reenrollment','Reenrollment'),('Appointment','Appointment'),('General Enquiry','General Enquiry'),('Leave','Leave'),
+    Parent_FrontDesk = SelectField('',
+        choices = [(-1, '<Select Request Type>'),('Reenrollment','Reenrollment'),('Bus Service','Bus Service'),('Appointment','Appointment'),('General Enquiry','General Enquiry'),('Leave','Leave'),
         ('Lost and Found','Lost and Found'),('General Enquiry','General Enquiry')])
-    Parent_Academic = SelectField('Academics Department',
+    Parent_Academic = SelectField('',
         choices = [(-1, '<Select Request Type>'),('Transcript/Report Card','Transcript/Report Card'),('Academic Paperwork','Academic Paperwork'),
         ('Enquiry','Enquiry')])
-    Parent_Accounting = SelectField('Accounting Department',
+    Parent_Accounting = SelectField('',
         choices = [(-1, '<Select Request Type>'),('Payment','Payment'),('Finance Enquiry ','Finance Enquiry')])
 
-    Visitor_FrontDesk = SelectField('Front Desk',
+    Visitor_FrontDesk = SelectField('',
         choices = [(-1, '<Select Request Type>'),('Enrollment','Enrollment'),('Admission Appointment','Admission Appointment'),('General Enquiry','General Enquiry'),
         ('Job Interview','Job Interview'), ('Business Meeting','Business Meeting')])
-    Visitor_Accounting = SelectField('Accounting Department',
+    Visitor_Accounting = SelectField('',
         choices = [(-1, '<Select Request Type>'),('Collect Payment','Payment')])
 
 

@@ -18,7 +18,7 @@ def collect_form_data(form):
     #handling translation cases
     if session["Selected_language"] == 'English':
 
-        if session["User_type"] == "Parent":
+        if session["user_type"] == "Parent":
             Contact = ""
             Parent_name = form.en_Parent_name.data
             if form.en_Student_id == None:

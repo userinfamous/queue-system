@@ -9,7 +9,7 @@
 
         <form method="POST" action="">
         <!-- Visitor-->
-        {% if user_type == 'Parent' %} <!-- Parent-->
+        {% if session.user_type == 'Parent' %} <!-- Parent-->
           {% if session.Selected_language == 'English' %} <!-- If user picked english-->
 
             <h3 class="text-center mb-3 pb-3"> Parent Information Request Form </h3>
@@ -94,11 +94,13 @@
           <!-- Submit Button -->
           {% if session.Selected_language == 'English' %} <!-- If user picked english-->
             <div class="box mt-4">
-              <input type="submit" class="btn btn-primary submit-button " value="Confirm">
+              <input type="button" class="btn btn-danger submit-button mr-2" onclick="history.back();" value="Back">
+              <input type="submit" class="btn btn-primary submit-button ml-2" value="Confirm">
             </div>
           {% elif session.Selected_language == 'Khmer' %}
             <div class="box mt-4">
-              <input type="submit" class="btn btn-primary submit-button " value="បហ្ជាក់">
+              <input type="button" class="btn btn-danger submit-button mr-2" onclick="history.back();" value="រឡប់​ក្រោយ">
+              <input type="submit" class="btn btn-primary submit-button ml-2" value="បហ្ជាក់">
             </div>
           {% endif %}
 
