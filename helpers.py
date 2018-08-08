@@ -26,7 +26,7 @@ def collect_form_data(form):
             else:
                 Student_id = form.en_Student_id.data
 
-        if session["User_type"] == "Student":
+        if session["user_type"] == "Student":
             Contact = ""
             Parent_name = ""
             if form.en_Student_id.data == None:
@@ -34,7 +34,7 @@ def collect_form_data(form):
             else:
                 Student_id = form.en_Student_id.data
 
-        if session["User_type"] == "Visitor":
+        if session["user_type"] == "Visitor":
             Student_id = ""
             Parent_name = form.en_Parent_name.data
             if form.en_Contact.data == None:
@@ -46,7 +46,7 @@ def collect_form_data(form):
 
     else: #Khmer form data
 
-        if session["User_type"] == "Parent":
+        if session["user_type"] == "Parent":
             Contact = ""
             Parent_name = form.kh_Parent_name.data
             if form.kh_Student_id == None:
@@ -54,7 +54,7 @@ def collect_form_data(form):
             else:
                 Student_id = form.kh_Student_id.data
 
-        if session["User_type"] == "Student":
+        if session["user_type"] == "Student":
             Contact = ""
             Parent_name = ""
             if form.kh_Student_id.data == None:
@@ -62,7 +62,7 @@ def collect_form_data(form):
             else:
                 Student_id = form.kh_Student_id.data
 
-        if session["User_type"] == "Visitor":
+        if session["user_type"] == "Visitor":
             Student_id = ""
             Parent_name = form.kh_Parent_name.data
             if form.kh_Contact.data == None:

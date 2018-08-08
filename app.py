@@ -28,7 +28,7 @@ app.secret_key = "i7T7e@CkqVkuHT5Lo9PH9xeg"
 #Configuring MySQL
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'CIACampus@2'
 app.config['MYSQL_DB'] = 'users'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
