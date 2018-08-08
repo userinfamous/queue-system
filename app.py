@@ -13,7 +13,6 @@
 
 #Importing necessary dependencies for the project
 from flask import Flask, render_template, redirect, flash, url_for, request, session, logging
-from tempfile import mkdtemp
 from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, SelectField, IntegerField, PasswordField, validators
 from passlib.hash import sha256_crypt
@@ -56,9 +55,9 @@ def select_user_type():
     #if End-User selected a user type
     if request.method == 'POST':
         #Record User type
-        session["User_type"] = request.form["User_type"]
+        session["user_type"] = request.form["User_type"]
         #Show debug message
-        flash('Selected ' + str(session["User_type"] + ' Form'), "success")
+        flash('Selected ' + str(session["user_type"] + ' Form'), "success")
         #Redirect to the next page
         return redirect(url_for('request_basic'))
     return render_template('enduser/select_user_type.html')
@@ -68,7 +67,7 @@ def select_user_type():
 @app.route('/request_basic',methods=['GET','POST'])
 def request_basic():
     #Make a request form class object and pass in request data from template to the object
-    form = RequestForm(request.form)
+    form = RequestBasicForm(request.form)
     #If enduser presses confirm to submit the form
     if request.method == 'POST':
         #Pass form into a function that handles translation from data receieved
@@ -76,8 +75,8 @@ def request_basic():
         #Connect to MySQL server and traverse the database with a dictionary cursor
         cur = mysql.connection.cursor()
         #Update the database
-        cur.execute("""INSERT INTO total_queue(User_type,Parent_name, Student_name, Student_id, Contact)
-        VALUES(%s, %s, %s, %s, %s)""", (session["User_type"], data['Parent_name'], data['Student_name'], data['Student_id'],  data['Contact']))
+        cur.execute("""INSERT INTO total_queue(user_type,Parent_name, Student_name, Student_id, Contact)
+        VALUES(%s, %s, %s, %s, %s)""", (session["user_type"], data['Parent_name'], data['Student_name'], data['Student_id'],  data['Contact']))
         #Commit to the database
         mysql.connection.commit()
         #Close connection to server
@@ -92,14 +91,37 @@ def request_basic():
 #Enduser fourth page. Filling out the forms.
 @app.route('/request_advance',methods=['GET','POST'])
 def request_advance():
+    #Make a request form class object and pass in request data from template to the object
+    form = RequestAdvanceForm(request.form)
     #If End-User select a request_type
     if request.method == 'POST':
-        #Get the request type
-        request_type = request.form["Request_type"]
+
+        if session["user_type"] == 'Student':
+            request_list = [form.Student_Academic.data,form.Student_Accounting,form.Student_FrontDesk.data]
+        elif session["user_type"] == 'Visitor':
+            request_list = [form.Visitor_FrontDesk.data, form.Visitor_Accounting.data]
+        elif session["user_type"] == 'Parent':
+            request_list = [form.Parent_Academic.data,form.Parent_FrontDesk.data,form.Parent_Accounting.data]
+        else:
+            error = "Unable to recognize user type."
+            render_template('enduser/select_language',error)
+
+        for request in request_list:
+            if request:
+                #Get the request type
+                request_type = request
+                number += 1
+        if number > 1:
+            error = "Please Don't Select more than one Request Type!"
+            return render_template('enduser/request_advance',error=error)
+
+
+
+
         #Connect to MySQL server and traverse the database with a dictionary cursor
         cur = mysql.connection.cursor()
         #if student
-        if session["User_type"] == "Student":
+        if session["user_type"] == "Student":
             #Get Recent Student_name
             recent = cur.execute("SELECT * FROM total_queue WHERE Student_name=%s", [session['Student_name']])
         else:
@@ -128,7 +150,7 @@ def request_advance():
         flash("Request Completed !", "success")
         #Return to index
         return redirect(url_for('select_language'))
-    return render_template('enduser/request_advance.html')
+    return render_template('enduser/request_advance.html',form=form)
 
 #Admin Registeration page, can technically be accessed by anyone
 @app.route('/register',methods=['GET','POST'])
@@ -360,7 +382,7 @@ def entry_complete(number):
     return redirect(url_for('workspace'))
 
 #request form class
-class RequestForm(Form):
+class RequestBasicForm(Form):
     en_Parent_name = StringField('Full Name',[
         validators.DataRequired(),
         validators.Length(min=1,max=100)])
@@ -389,6 +411,32 @@ class WorkspaceForm(Form):
         choices = [(-1,'<Select Request Type>'),('Information','Information'), ('Enrollment','Enrollment'), ('Tuition Fee','Tuition Fee')]
     )
 
+class RequestAdvanceForm(Form):
+    Student_FrontDesk = SelectField('Front Desk:',
+        choices = [(-1, '<Select Request Type>'),('Late Slip','Late Slip'),('Leave Early','Leave Early'),('Reenrollment','Reenrollment'),
+        ('Lost and Found','Lost and Found'),('General Enquiry','General Enquiry')])
+    Student_Academic = SelectField('Academics Department',
+        choices = [(-1, '<Select Request Type>'),('Transcript/Report Card','Transcript/Report Card'),('Academic Paperwork','Academic Paperwork'),
+        ('Enquiry','Enquiry')])
+    Student_Accounting = SelectField('Accounting Department',
+        choices = [(-1, '<Select Request Type>'),('Payment','Payment')])
+
+    Parent_FrontDesk = SelectField('Front Desk',
+        choices = [(-1, '<Select Request Type>'),('Reenrollment','Reenrollment'),('Appointment','Appointment'),('General Enquiry','General Enquiry'),('Leave','Leave'),
+        ('Lost and Found','Lost and Found'),('General Enquiry','General Enquiry')])
+    Parent_Academic = SelectField('Academics Department',
+        choices = [(-1, '<Select Request Type>'),('Transcript/Report Card','Transcript/Report Card'),('Academic Paperwork','Academic Paperwork'),
+        ('Enquiry','Enquiry')])
+    Parent_Accounting = SelectField('Accounting Department',
+        choices = [(-1, '<Select Request Type>'),('Payment','Payment'),('Finance Enquiry ','Finance Enquiry')])
+
+    Visitor_FrontDesk = SelectField('Front Desk',
+        choices = [(-1, '<Select Request Type>'),('Enrollment','Enrollment'),('Admission Appointment','Admission Appointment'),('General Enquiry','General Enquiry'),
+        ('Job Interview','Job Interview'), ('Business Meeting','Business Meeting')])
+    Visitor_Accounting = SelectField('Accounting Department',
+        choices = [(-1, '<Select Request Type>'),('Collect Payment','Payment')])
+
+
 #register form class
 class RegisterForm(Form):
     Name = StringField('Full Name', [
@@ -413,4 +461,4 @@ class RegisterForm(Form):
 
 # if name of app is main
 if __name__ == '__main__':
-    app.run(debug = True)
+    app.run(host="0.0.0.0",port="80",debug = True)

@@ -5,23 +5,42 @@
 
   <div class="outer">
     <div class="middle">
-      <div class="inner">
+      <div class="container inner">
 
         <form method="POST" action="">
 
-          <h3 class="text-center mb-3 pb-3"> {% if session.Selected_language == 'English'%} Please Choose Request Type {% else %} សូមជ្រើសរើស {% endif %} </h3>
+          <h3 class="text-center mb-3 pb-3"> {% if session.Selected_language == 'English'%} Please Choose a Request Type
+          {% elif session.Selected_language == 'Khmer' %} សូមជ្រើសរើស {% endif %} </h3>
 
-          <button id="submit-info-button" type="submit" name="Request_type" value="Information" class="btn btn-info btn-lg btn-block">
-            {% if session.Selected_language == 'English'%} Information {% else %} ព័ត៌មាន {% endif %}
-          </button>
+          {% if user_type == 'Parent' %}
+          <div class="row">
+            <div class="col-sm-4 text-center mb-3">{{render_field(form.Parent_FrontDesk,class="form-control")}}</div>
+            <div class="col-sm-4 text-center mb-3">{{render_field(form.Parent_Accounting,class="form-control")}}</div>
+            <div class="col-sm-4 text-center mb-3">{{render_field(form.Parent_Academic,class="form-control")}}</div>
+          </div>
+          {% elif user_type == 'Student' %}
+          <div class="row">
+            <div class="col-sm-4 text-center mt-3">{{render_field(form.Student_FrontDesk,class="form-control")}}</div>
+            <div class="col-sm-4 text-center mt-3">{{render_field(form.Student_Accounting,class="form-control")}}</div>
+            <div class="col-sm-4 text-center mt-3">{{render_field(form.Student_Academic,class="form-control")}}</div>
+          </div>
+          {% elif user_type == 'Visitor' %}
+          <div class="row">
+            <div class="col-sm-6 text-center mt-3 pb-3">{{render_field(form.Visitor_FrontDesk,class="form-control")}}</div>
+            <div class="col-sm-6 text-center mt-3 pb-3">{{render_field(form.Visitor_Accounting,class="form-control")}}</div>
+          </div>
+          {% endif %}
 
-          <button id="submit-info-button" type="submit" name="Request_type" value="Enrollment" class="btn btn-info btn-lg btn-block">
-            {% if session.Selected_language == 'English'%} Enrollment {% else %} ចុះឈ្មោះចូលរៀន {% endif %}
-          </button>
-
-          <button id="submit-info-button" type="submit" name="Request_type" value="Tuition Fee" class="btn btn-info btn-lg btn-block">
-            {% if session.Selected_language == 'English'%} Tuition Fee {% else %} បង់ថ្លៃសិក្សា {% endif %}
-          </button>
+          <!-- Submit Button -->
+          {% if session.Selected_language == 'English' %} <!-- If user picked english-->
+            <div class="box mt-4">
+              <input id="submit-info-button" type="submit" class="btn btn-primary submit-button " value="Confirm">
+            </div>
+          {% else %}
+            <div class="box mt-4">
+              <input id="submit-info-button" type="submit" class="btn btn-primary submit-button " value="បហ្ជាក់">
+            </div>
+          {% endif %}
 
         </form>
 

@@ -9,15 +9,15 @@
           <h3 class="text-center mb-3 pb-3"> {% if session.Selected_language == 'English'%} I am a ... {% else %} ខ្ញុំ​ជា... {% endif %} </h3>
 
           <button type="submit" name="User_type" value="Parent" class="btn btn-info btn-lg btn-block">
-            {% if session.Selected_language == 'English'%} Parent {% else %} ឪពុកម្តាយ {% endif %}
+            {% if session.Selected_language == 'English'%} Parent {% elif session.Selected_language == 'Khmer' %} ឪពុកម្តាយ {% endif %}
           </button>
 
           <button type="submit" name="User_type" value="Student" class="btn btn-info btn-lg btn-block">
-            {% if session.Selected_language == 'English'%} Student {% else %} សិស្ស {% endif %}
+            {% if session.Selected_language == 'English'%} Student {% elif session.Selected_language == 'Khmer' %} សិស្ស {% endif %}
           </button>
 
           <button type="submit" name="User_type" value="Visitor" class="btn btn-info btn-lg btn-block">
-            {% if session.Selected_language == 'English'%} Visitor {% else %} ផ្ញ្យេវ {% endif %}
+            {% if session.Selected_language == 'English'%} Visitor {% elif session.Selected_language == 'Khmer' %} ផ្ញ្យេវ {% endif %}
           </button>
         </form>
       </div>
