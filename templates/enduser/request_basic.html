@@ -94,12 +94,12 @@
           <!-- Submit Button -->
           {% if session.Selected_language == 'English' %} <!-- If user picked english-->
             <div class="box mt-4">
-              <input type="button" class="btn btn-danger submit-button mr-2" onclick="history.back();" value="Back">
+              <input type="button" class="btn btn-danger submit-button mr-2" onclick="location.href='select_user_type';" value="Back">
               <input type="submit" class="btn btn-primary submit-button ml-2" value="Confirm">
             </div>
           {% elif session.Selected_language == 'Khmer' %}
             <div class="box mt-4">
-              <input type="button" class="btn btn-danger submit-button mr-2" onclick="history.back();" value="រឡប់​ក្រោយ">
+              <input type="button" class="btn btn-danger submit-button mr-2" onclick="location.href='select_user_type';" value="រឡប់​ក្រោយ">
               <input type="submit" class="btn btn-primary submit-button ml-2" value="បហ្ជាក់">
             </div>
           {% endif %}
