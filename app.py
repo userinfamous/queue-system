@@ -1,4 +1,4 @@
-#Author: Vuottek Un
+#Author: Vuottek Un (Test1)
 #Project Title: Queue-System
 #Description:
 #   The upper parts are imports and declaration of the app
