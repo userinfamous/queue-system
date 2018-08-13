@@ -21,7 +21,7 @@
 
       {% if queue.Parent_name %}
         <div id="display-name"><p> {{queue.Parent_name}} </p></div>
-        <div id="display-info"><p>=> {{queue.Department}} Department </p></div>
+        <div id="display-info"><p>Please go to the {{queue.Department}} Department office. </p></div>
 
       {% elif queue.Student_name %}
         <div id="display-name"><p> {{queue.Student_name}} </p></div>
@@ -35,8 +35,9 @@
 
 <script>
   window.setInterval(function(){
-      if (localStorage.call == "1") {
+      if (localStorage.call == "1") || (localStorage.complete == "1") {
           localStorage.call = "0"; // This uses local storage: it should be fine since we're running everything from the same server
+          localStorage.complete = "0";
           window.location.reload(true);
       }
   }, 500);

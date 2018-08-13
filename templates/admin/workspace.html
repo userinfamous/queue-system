@@ -5,7 +5,6 @@
 
   <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/workspace"> School Logo</a>
-    <span class="text-white"> Welcome to your workspace, {{session.username.upper()}} ! </span>
     <ul class="navbar-nav px-3">
       <li class="nav-item text-nowrap">
         <a class="nav-link" href="/logout">Log out</a>
@@ -108,7 +107,7 @@
 
                 <td align="left">
                   {% if queue.Status == 'In Progress' %}
-                  <form action="{{url_for('entry_complete', number=queue.Number)}}" method="POST">
+                  <form action="{{url_for('entry_complete', number=queue.Number)}}" id="complete-button" method="POST">
                     <input type="hidden" name="method" value="COMPLETE">
                     <input type="submit" value="Complete" class="btn btn-success">
                   </form>
@@ -155,24 +154,23 @@
 
   localStorage.setItem("reassign", "0");
   localStorage.setItem("call", "0");
+  localStorage.setItme("complete","0")
 
   $('body').on('click', '#reassign-button', function() {
       localStorage.setItem("reassign", "1");
   });
+  /* For call button and complete button the trigger is in display.html */
   $('body').on('click', '#call-button', function() {
       localStorage.setItem("call", "1");
   });
+  $('body').on('click', '#complete-button', function() {
+      localStorage.setItem("complete", "1");
+  });
 
   window.setInterval(function(){
-      if (localStorage.update == "1") {
+      if (localStorage.update == "1") || (localStorage.reassign == "1") {
           localStorage.update = "0"; // This uses local storage: it should be fine since we're running everything from the same server
-          window.location.reload(true);
-      }
-  }, 500);
-
-  window.setInterval(function(){
-      if (localStorage.reassign == "1") {
-          localStorage.reassign = "0"; // This uses local storage: it should be fine since we're running everything from the same server
+          localStorage.reassign = "0";
           window.location.reload(true);
       }
   }, 500);
