@@ -19,12 +19,12 @@
           <!-- Submit Button -->
           {% if session.selected_language == 'English' %} <!-- If user picked english-->
             <div class="box mt-4">
-              <input id="submit-info-button" type="submit" class="btn btn-danger submit-button mr-2 " name="Back" value="Back">
+              <input type="submit" class="btn btn-danger submit-button mr-2 " name="Back" value="Back">
               <input id="submit-info-button" type="submit" class="btn btn-primary submit-button ml-2" name="Confirm" value="Confirm">
             </div>
           {% else %}
             <div class="box mt-4">
-              <input id="submit-info-button" type="submit" class="btn btn-primary submit-button mr-2" name="Back" value="ត្រឡប់​ក្រោយ">
+              <input type="submit" class="btn btn-primary submit-button mr-2" name="Back" value="ត្រឡប់​ក្រោយ">
               <input id="submit-info-button" type="submit" class="btn btn-primary submit-button ml-2"  name="Confirm" value="បហ្ជាក់">
             </div>
           {% endif %}
@@ -46,7 +46,7 @@
   $('body').on('click', '#submit-info-button', function(){
       localStorage.setItem("update", "1");
   });
-  
+
 </script>
 
 {% endblock %}

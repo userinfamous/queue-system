@@ -33,12 +33,15 @@
 </div>
 {% endblock %}
 
+{% block custom_scripts %}
 <script>
   window.setInterval(function(){
-      if (localStorage.call == "1") || (localStorage.complete == "1") {
+      if (localStorage.call == "1" || localStorage.complete == "1") {
           localStorage.call = "0"; // This uses local storage: it should be fine since we're running everything from the same server
           localStorage.complete = "0";
           window.location.reload(true);
       }
   }, 500);
 </script>
+
+{% endblock %}

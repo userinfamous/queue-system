@@ -84,11 +84,11 @@
                 <!-- If the queue is on top -->
                 {% if queue == queues[0] %}
                 <td>
-                  {% if queue.Status != 'In Progress' %}
+                  {% if queue.Status == 'Waiting' %}
 
-                  <form action="{{url_for('entry_call', number=queue.Number)}}" method="POST" id="call-button">
+                  <form action="{{url_for('entry_call', number=queue.Number)}}" method="POST">
                     <input type="hidden" name="method" value="CALL">
-                    <input type="submit" value="Call Number" class="btn btn-warning">
+                    <input id="call-button" type="submit" value="Call Number" class="btn btn-warning">
                   </form>
 
                   {% else %} <!-- If status is in progress or admin pressed Call Number, load the reassign table -->
@@ -97,9 +97,9 @@
 
                 <!-- This might confuse you, but we want to load a whole table when as the above, we just want the data -->
                 <td align="right">
-                  <form action="" method="POST" id="reassign-button">
+                  <form action="" method="POST">
                     {{ render_field(form.Assign, class="submit-button", label="Assign") }}
-                    <input type="submit" value="Assign" class="btn btn-info">
+                    <input id="reassign-button" type="submit" value="Reassign" class="btn btn-info">
                   </form>
                 </td>
 
@@ -107,9 +107,9 @@
 
                 <td align="left">
                   {% if queue.Status == 'In Progress' %}
-                  <form action="{{url_for('entry_complete', number=queue.Number)}}" id="complete-button" method="POST">
+                  <form action="{{url_for('entry_complete', number=queue.Number)}}" method="POST">
                     <input type="hidden" name="method" value="COMPLETE">
-                    <input type="submit" value="Complete" class="btn btn-success">
+                    <input id="complete-button" type="submit" value="Complete" class="btn btn-success">
                   </form>
                 </td>
 
@@ -154,7 +154,7 @@
 
   localStorage.setItem("reassign", "0");
   localStorage.setItem("call", "0");
-  localStorage.setItme("complete","0")
+  localStorage.setItem("complete","0")
 
   $('body').on('click', '#reassign-button', function() {
       localStorage.setItem("reassign", "1");
@@ -168,14 +168,12 @@
   });
 
   window.setInterval(function(){
-      if (localStorage.update == "1") || (localStorage.reassign == "1") {
+      if (localStorage.update == "1" || localStorage.reassign == "1") {
           localStorage.update = "0"; // This uses local storage: it should be fine since we're running everything from the same server
           localStorage.reassign = "0";
           window.location.reload(true);
       }
   }, 500);
-
-</script>
 
 </script>
 
