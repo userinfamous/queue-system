@@ -5,7 +5,7 @@
 
   <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/workspace"> School Logo</a>
-    <span class="text-white"> Welcome to your workspace {{session.username}} !</span>
+    <span class="text-white"> Welcome to your workspace, {{session.username.upper()}} ! </span>
     <ul class="navbar-nav px-3">
       <li class="nav-item text-nowrap">
         <a class="nav-link" href="/logout">Log out</a>
@@ -54,7 +54,7 @@
       <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
 
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-          <h1 class="h2">{{session.department}} Queue</h1>
+          <h1> {{session.department}} Queue</h1>
         </div>
 
         <div id="queue-data" class="table-responsive queue-container">
@@ -87,7 +87,7 @@
                 <td>
                   {% if queue.Status != 'In Progress' %}
 
-                  <form action="{{url_for('entry_call', number=queue.Number)}}" method="POST">
+                  <form action="{{url_for('entry_call', number=queue.Number)}}" method="POST" id="call-button">
                     <input type="hidden" name="method" value="CALL">
                     <input type="submit" value="Call Number" class="btn btn-warning">
                   </form>
@@ -98,9 +98,9 @@
 
                 <!-- This might confuse you, but we want to load a whole table when as the above, we just want the data -->
                 <td align="right">
-                  <form action="" method="POST">
-                    {{ render_field(form.Reassign, class="submit-button") }}
-                    <input type="submit" value="Reassign" class="btn btn-info">
+                  <form action="" method="POST" id="reassign-button">
+                    {{ render_field(form.Assign, class="submit-button", label="Assign") }}
+                    <input type="submit" value="Assign" class="btn btn-info">
                   </form>
                 </td>
 
@@ -153,12 +153,31 @@
 <!-- Ajax for workspace, this is the refresh page (not the activator or the controller page), that is at request_advance.html -->
 <script>
 
+  localStorage.setItem("reassign", "0");
+  localStorage.setItem("call", "0");
+
+  $('body').on('click', '#reassign-button', function() {
+      localStorage.setItem("reassign", "1");
+  });
+  $('body').on('click', '#call-button', function() {
+      localStorage.setItem("call", "1");
+  });
+
   window.setInterval(function(){
       if (localStorage.update == "1") {
           localStorage.update = "0"; // This uses local storage: it should be fine since we're running everything from the same server
           window.location.reload(true);
       }
   }, 500);
+
+  window.setInterval(function(){
+      if (localStorage.reassign == "1") {
+          localStorage.reassign = "0"; // This uses local storage: it should be fine since we're running everything from the same server
+          window.location.reload(true);
+      }
+  }, 500);
+
+</script>
 
 </script>
 

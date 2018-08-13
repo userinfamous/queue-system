@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Aug 02, 2018 at 04:01 AM
+-- Generation Time: Aug 08, 2018 at 07:44 AM
 -- Server version: 5.6.34-log
 -- PHP Version: 7.2.1
 
@@ -38,13 +38,23 @@ CREATE TABLE `request_types` (
 --
 
 INSERT INTO `request_types` (`Department`, `Request_type`) VALUES
-('Front Desk', 'Leave School'),
-('Front Desk', 'Information'),
+('Front Desk', 'Leave Early'),
+('Front Desk', 'General Enquiry'),
 ('Front Desk', 'Enrollment'),
 ('Accounting', 'Tuition Fee'),
 ('Accounting', 'Accessory Fee'),
-('Accounting', 'Items Lost Fee'),
-('Accounting', 'Field Trip Fee');
+('Accounting', 'Payment'),
+('Front Desk', 'Late Slip'),
+('Front Desk', 'Reenrollment'),
+('Front Desk', 'Lost and Found'),
+('Academic', 'Academic Paperwork'),
+('Academic', 'Enquiry'),
+('Academic', 'Transcript/Report Card'),
+('Accounting', 'Enquiry'),
+('Front Desk', 'Bus Service'),
+('Front Desk', 'Appointment'),
+('Front Desk', 'Job Interview'),
+('Front Desk', 'Business Meeting');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

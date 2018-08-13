@@ -1,3 +1,27 @@
+/* Font Section*/
+.khmer-font1	{
+  font-family: 'Kantumruy', sans-serif;
+}
+.khmer-font2 {
+  font-family: 'Dangrek', cursive;
+}
+
+h1, h2 {
+  font-family: 'Advent Pro', sans-serif;
+}
+
+a, h3, h4 {
+  font-family: 'Coda', cursive;
+}
+
+th, td, #flashes {
+  font-family: 'Muli', sans-serif;
+}
+
+button, input, p, span {
+  font-family: 'Abel', sans-serif;
+}
+
 /* The usage of flex in boxes allows the content to be more flexible in terms of display (especially smaller screens)*/
 .box {
   display: flex;
@@ -11,7 +35,7 @@
 }
 
 /*Flashing Messages*/
-.flashes {
+#flashes {
   border-radius: 0px;
   z-index: 1031; /*We don't want the navbar(1030) to appear over on top*/
 }
@@ -100,12 +124,10 @@ thead,table.floatThead-table{
 }
 
 #display-name {
-  font-size: 6vw;
+  font-size: 10vw;
+  font-weight: bold;
 }
-#display-title {
-  font-size: 5vw;
-}
-#display-subtitle {
+#display-info {
   font-size: 4vw;
 }
 
@@ -158,4 +180,20 @@ thead,table.floatThead-table{
 .sidebar-heading {
   font-size: .75rem;
   text-transform: uppercase;
+}
+
+/*rotations*/
+.rotate180 {
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+.rotate90 {
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
 }

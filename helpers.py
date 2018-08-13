@@ -16,7 +16,7 @@ def login_required(f):
 def collect_form_data(form):
     Parent_name,Student_name,Student_id,Contact = "","","",""
     #handling translation cases
-    if session["Selected_language"] == 'English':
+    if session["selected_language"] == 'English':
 
         if session["user_type"] == "Parent":
             Contact = ""
@@ -44,7 +44,7 @@ def collect_form_data(form):
 
         Student_name = form.en_Student_name.data
 
-    else: #Khmer form data
+    elif session["selected_language"] == "Khmer": #Khmer form data
 
         if session["user_type"] == "Parent":
             Contact = ""

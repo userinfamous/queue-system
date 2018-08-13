@@ -4,20 +4,40 @@
 <div class="outer">
   <div class=" middle text-center">
 
-    <div id="display-title"><p>Display(Temporary)</p></div>
-
     {% for queue in queues %}
+      {%if queue.Department == 'Academic' %}
+        <div class="box">
+          <img class="rotate180" src="/static/images/arrow-right.svg" alt="" width="350" height="350">
+        </div>
+      {% elif queue.Department == 'Accounting'%}
+        <div class="box">
+          <img src="/static/images/arrow-right.svg" alt="" width="350" height="350">
+        </div>
+      {% elif queue.Department == 'Front Desk'%}
+        <div class="box">
+          <img class="rotate90" src="/static/images/arrow-right.svg" alt="" width="350" height="350">
+        </div>
+      {% endif %}
+
       {% if queue.Parent_name %}
-    <div id="display-subtitle"><p>Please go to {{queue.Department}} Department :</p></div>
-    <div id="display-name"><p>{{queue.Parent_name}}</p></div>
+        <div id="display-name"><p> {{queue.Parent_name}} </p></div>
+        <div id="display-info"><p>=> {{queue.Department}} Department </p></div>
 
-      {% else %}
-    <div id="display-subtitle"><p>Please go to {{queue.Department}} Department :</p></div>
-    <div id="display-name"><p>{{queue.Student_name}}</p></div>
-
+      {% elif queue.Student_name %}
+        <div id="display-name"><p> {{queue.Student_name}} </p></div>
+        <div id="display-info"><p>Please go to the {{queue.Department}} Department office. </p></div>
       {% endif %}
     {% endfor %}
 
   </div>
 </div>
 {% endblock %}
+
+<script>
+  window.setInterval(function(){
+      if (localStorage.call == "1") {
+          localStorage.call = "0"; // This uses local storage: it should be fine since we're running everything from the same server
+          window.location.reload(true);
+      }
+  }, 500);
+</script>
