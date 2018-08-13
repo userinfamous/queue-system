@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Aug 08, 2018 at 07:44 AM
+-- Generation Time: Aug 13, 2018 at 02:22 AM
 -- Server version: 5.6.34-log
 -- PHP Version: 7.2.1
 
@@ -42,15 +42,14 @@ INSERT INTO `request_types` (`Department`, `Request_type`) VALUES
 ('Front Desk', 'General Enquiry'),
 ('Front Desk', 'Enrollment'),
 ('Accounting', 'Tuition Fee'),
-('Accounting', 'Accessory Fee'),
 ('Accounting', 'Payment'),
 ('Front Desk', 'Late Slip'),
 ('Front Desk', 'Reenrollment'),
 ('Front Desk', 'Lost and Found'),
 ('Academic', 'Academic Paperwork'),
-('Academic', 'Enquiry'),
+('Academic', 'Academic Enquiry'),
 ('Academic', 'Transcript/Report Card'),
-('Accounting', 'Enquiry'),
+('Accounting', 'Finance Enquiry'),
 ('Front Desk', 'Bus Service'),
 ('Front Desk', 'Appointment'),
 ('Front Desk', 'Job Interview'),
