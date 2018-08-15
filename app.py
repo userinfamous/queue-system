@@ -22,7 +22,6 @@ from datetime import timedelta
 
 #app is the name of the flask app
 app = Flask(__name__)
-
 #necessary for session to work
 app.secret_key = "i7T7e@CkqVkuHT5Lo9PH9xeg"
 
@@ -112,7 +111,6 @@ def request_advance():
             flash("You do not have the necessary data to pass through.","danger")
             return redirect(url_for('select_language'))
 
-
     #Make a request form class object and pass in request data from template to the object
     form = WorkspaceForm(request.form)
     #If End-User select a request_type
@@ -135,11 +133,15 @@ def request_advance():
         return redirect(url_for('request_basic'))
 
     elif request.method == 'POST' and request.form.get("Confirm"):
-        request_type = form.Assign.data
+        if session["selected_language"] == 'English':
+            request_type = form.en_Assign.data
+        elif session["selected_language"] == 'Khmer':
+            request_type = form.kh_Assign.data
+
         #Connect to MySQL server and traverse the database with a dictionary cursor
         cur = mysql.connection.cursor()
         #check for recent entries formed by request basic in the database
-        recent = cur.execute("SELECT * FROM total_queue WHERE Status=%s AND Request_type='' AND Student_name=%s", (["Waiting"],session["student_name"]))
+        recent = cur.execute("SELECT * FROM total_queue WHERE Status=%s AND Request_type='' AND Student_name=%s ", (["Waiting"],session["student_name"]))
         #Get that student number or current postion in the queue
         number = cur.fetchone()["Number"]
         #Update total_queue, the Request_type using current queue position
@@ -153,6 +155,9 @@ def request_advance():
             cur.execute("INSERT INTO front_desk_queue(Number) VALUES(%s)",[number]) #record time in
         elif department == 'Accounting':
             cur.execute("INSERT INTO accounting_queue(Number) VALUES(%s)",[number])  #record time in
+        elif department == "Academic":
+            cur.execute("INSERT INTO academic_queue(Number) VALUES(%s)",[number])  #record time in
+
         #Commit to Database
         mysql.connection.commit()
         #Close connection
@@ -265,26 +270,25 @@ def workspace():
     results = cur.execute("""SELECT *
     FROM total_queue JOIN (request_types)
     ON (total_queue.Request_type = request_types.Request_type)
-    WHERE request_types.Department = %s AND total_queue.Status != %s """, (session["department"], ["Completed"]))
+    WHERE request_types.Department = %s AND total_queue.Status != %s""", (session["department"], ["Completed"])) #!= accounts for waiting numbers too
     #if admin presses reassign button
-    if request.method == 'POST' and form.validate():
+    if request.method == 'POST':
         #Get request_type from reassign form
-        Assign = form.Assign.data
+        reassign = form.en_Assign.data
+        #Select all in progress
+        results = cur.execute("SELECT * FROM total_queue WHERE Status=%s",["In Progress"])
         #Select number from the total_queue table, fetch the one on top to reassign
-        cur.execute("SELECT * FROM total_queue WHERE Status = %s",["In Progress"])
-        #Fetch the number from the top column
         query = cur.fetchone()
         number = query["Number"]
         current = query["Request_type"]
         #Update the request type which will display it to a different department
-        cur.execute("UPDATE total_queue SET Request_type=%s WHERE Number=%s",([Assign],[number]))
+        cur.execute("UPDATE total_queue SET Request_type=%s WHERE Number=%s",([reassign],[number]))
         #Select all from request types table where data in column matches with the request type
-        data = cur.execute("SELECT * FROM request_types WHERE Request_type=%s", [Assign])
+        data = cur.execute("SELECT * FROM request_types WHERE Request_type=%s", [reassign])
         #Fetch the department related to the request type
         department = cur.fetchone()["Department"]
-
         #Don't allow same department to reassign
-        if current == Assign:
+        if current == reassign:
             flash("Can't reassign to the same request type!","danger")
             return redirect(url_for('workspace'))
 
@@ -331,14 +335,10 @@ def workspace():
                     #If its still in the same department then just update the time in
                     cur.execute("UPDATE academic_queue SET Time_in=NOW() WHERE Number=%s", [number])
 
-
-
-        #flash debug message
-        flash(number,"success")
         #Commit to database
         mysql.connection.commit()
         #flash message
-        flash('Entry Assigned! ', 'success')
+        flash('Entry Reassigned! ', 'success')
         #return to workspace after reassign
         return redirect(url_for('workspace'))
 
@@ -364,7 +364,7 @@ def display():
     results = cur.execute("""SELECT *
     FROM total_queue JOIN (request_types)
     ON (total_queue.Request_type = request_types.Request_type)
-    WHERE Status=%s""",["In Progress"])
+    WHERE Status=%s """,["In Progress"])
     #fetch all
     queues = cur.fetchall()
     #Close connection
@@ -457,7 +457,7 @@ class RequestBasicForm(Form):
 
 #reassign form class
 class WorkspaceForm(Form):
-    Assign = SelectField( '',
+    en_Assign = SelectField( '',
         choices = [(-1,'<Select Request Type>'),
         #Academic
         ('Academic Section', (
@@ -469,20 +469,50 @@ class WorkspaceForm(Form):
         ('Accounting Section', (
             ('Finance Enquiry','Finance Enquiry'),
             ('Payment','Payment'),
-            ('Tuition Fee','Tuition Fee'),
+            ('Tuition Fee','Tuition Fee')
         )),
         #Front Desk
         ('Front Desk Section', (
-            ('Job Interview','Job Interview'),
-            ('Appointment','Appointment'),
-            ('Bus Service','Bus Service'),
-            ('Leave Early','Leave Early'),
-            ('Lost and Found','Lost and Found'),
+            ('General Enquiry','General Enquiry'),
+            ('Enrollment','Enrollment'),
             ('Reenrollment','Reenrollment'),
             ('Late Slip','Late Slip'),
-            ('Enrollment','Enrollment'),
-            ('General Enquiry','General Enquiry'),
-            ('Business Meeting','Business Meeting')
+            ('Leave Early','Leave Early'),
+            ('Bus Service','Bus Service'),
+            ('Lost and Found','Lost and Found'),
+            ('Appointment','Appointment'),
+            ('Business Meeting','Business Meeting'),
+            ('Job Interview','Job Interview')
+        ))
+        ]
+    )
+
+    kh_Assign = SelectField( '',
+        choices = [(-1,'ជ្រើសរើសលក្ខណៈនៃការស្នើសុំ'),
+        #Academic
+        ('ផ្នែកសិក្សា', (
+            ('Academic Enquiry','សំណួរអំពីផ្នែកការសិក្សា'),
+            ('Academic Paperwork','ឯកសារសិក្សា'),
+            ('Transcript/Report Card','របាយការណ៍កាតរបស់សិស្ស')
+        )),
+        #Accounitng
+        ('ផ្នែកគណនេយ្យ', (
+            ('Finance Enquiry','សំណួរអំពីហិរញ្ញវត្ថុ'),
+            ('Payment','បង់ថ្លៃផ្សេងៗ'),
+            ('Tuition Fee','បង់ថ្លៃ​សិក្សា')
+        )),
+        #Front Desk
+        ('ផ្នែកការិយាល័យទទួលភ្ញៀវ', (
+            ('General Enquiry','ការសាកសួរជាទូទៅ'),
+            ('Enrollment','ចុះឈ្មោះចូលរៀនលើកដំបូង'),
+            ('Reenrollment','ចុះឈ្មោះចូលរៀនសារ​ជា​ថ្មី'),
+            ('Late Slip','ក្រដាសយឺតសម្រាប់មកយឺត'),
+            ('Leave Early','ចាកចេញមុនម៉ោង'),
+            ('Bus Service','សេវាកម្មឡានក្រុង'),
+            ('Lost and Found','បាត់បង់អ្វីមួយ'),
+            ('Appointment','ការណាត់ជួប'),
+            ('Business Meeting','មានកិច្ចប្រជុំ'),
+            ('Job Interview','សំភាសន៍ការងារ')
         ))
         ]
     )

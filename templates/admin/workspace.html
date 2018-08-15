@@ -98,7 +98,7 @@
                 <!-- This might confuse you, but we want to load a whole table when as the above, we just want the data -->
                 <td align="right">
                   <form action="" method="POST">
-                    {{ render_field(form.Assign, class="submit-button", label="Assign") }}
+                    {{ render_field(form.en_Assign, class="submit-button") }}
                     <input id="reassign-button" type="submit" value="Reassign" class="btn btn-info">
                   </form>
                 </td>
@@ -142,7 +142,6 @@
 {% endblock %}
 
 {% block custom_scripts %}
-
 <!-- Making Table Headers stick to the top (we don't need this on every page)-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.1.2/jquery.floatThead.js"></script>
 
@@ -151,30 +150,20 @@
 
 <!-- Ajax for workspace, this is the refresh page (not the activator or the controller page), that is at request_advance.html -->
 <script>
-
-  localStorage.setItem("reassign", "0");
-  localStorage.setItem("call", "0");
-  localStorage.setItem("complete","0")
-
-  $('body').on('click', '#reassign-button', function() {
-      localStorage.setItem("reassign", "1");
-  });
-  /* For call button and complete button the trigger is in display.html */
-  $('body').on('click', '#call-button', function() {
-      localStorage.setItem("call", "1");
-  });
-  $('body').on('click', '#complete-button', function() {
-      localStorage.setItem("complete", "1");
-  });
-
-  window.setInterval(function(){
-      if (localStorage.update == "1" || localStorage.reassign == "1") {
-          localStorage.update = "0"; // This uses local storage: it should be fine since we're running everything from the same server
-          localStorage.reassign = "0";
-          window.location.reload(true);
-      }
+  setInterval(function(){
+    var update= Cookies.get('update_workspace');
+    if (update == 'true') {
+      location.reload(true);
+      Cookies.remove('update_workspace');
+    }
   }, 500);
 
+  $('body').on('click', '#complete-button', function(){
+      Cookies.set('update_display', 'true', {expires: 1}); //expires after 1 day
+  });
+  $('body').on('click', '#call-button', function(){
+      Cookies.set('update_display', 'true', {expires: 1}); //expires after 1 day
+  });
 </script>
 
 {% endblock %}

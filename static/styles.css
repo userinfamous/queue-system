@@ -10,7 +10,7 @@ h1, h2 {
   font-family: 'Advent Pro', sans-serif;
 }
 
-a, h3, h4 {
+a, h4 {
   font-family: 'Coda', cursive;
 }
 
@@ -18,7 +18,7 @@ th, td, #flashes {
   font-family: 'Muli', sans-serif;
 }
 
-button, input, p, span {
+button, input, p, span, h3 {
   font-family: 'Abel', sans-serif;
 }
 

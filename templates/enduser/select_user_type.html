@@ -6,7 +6,7 @@
     <div class="middle">
       <div class="inner">
         <form action="" method="POST">
-          <h3 class="text-center mb-3 pb-3"> {% if session.selected_language == 'English'%} I am a ... {% elif session.selected_language == 'Khmer' %} <span class="khmer-font1">ខ្ញុំ​ជា... </span>{% endif %} </h3>
+          <h3 class="text-center mb-3 pb-3"> {% if session.selected_language == 'English'%} I am a ... {% elif session.selected_language == 'Khmer' %} <span class="khmer-font2">ខ្ញុំ​ជា... </span>{% endif %} </h3>
 
           <button type="submit" name="User_type" value="Parent" class="btn btn-info btn-lg btn-block">
             {% if session.selected_language == 'English'%} Parent {% elif session.selected_language == 'Khmer' %} <span class="khmer-font1">ឪពុកម្តាយ </span>{% endif %}
@@ -26,7 +26,7 @@
           </div>
           {% elif session.selected_language == 'Khmer' %}
           <div class="box mt-4">
-            <input type="button" class="btn btn-danger submit-button mr-2 khmer-font2" onclick="location.href='/';" value="ត្រឡប់​ក្រោយ">
+            <input type="button" class="btn btn-danger submit-button mr-2 khmer-font1" onclick="location.href='/';" value="ត្រឡប់​ក្រោយ">
           </div>
           {% endif %}
 

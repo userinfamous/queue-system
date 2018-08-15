@@ -25,7 +25,7 @@
 
           {% elif session.selected_language == 'Khmer' %} <!-- If user picked Khmer-->
 
-            <h3 class="text-center mb-3 pb-3 khmer-font1"> ឪពុកម្តាយសំណុំបែបបទស្នើសុំព័ត៌មាន </h3>
+            <h3 class="text-center mb-3 pb-3 khmer-font2"> ឪពុកម្តាយសំណុំបែបបទស្នើសុំព័ត៌មាន </h3>
             <div class="form-group khmer-font1">
               {{ render_field(form.kh_Parent_name, class="form-control" ,placeholder="*ត្រូវការ" )}}
             </div>
@@ -99,8 +99,8 @@
             </div>
           {% elif session.selected_language == 'Khmer' %}
             <div class="box mt-4">
-              <input type="button" class="btn btn-danger submit-button mr-2 khmer-font2" onclick="location.href='select_user_type';" value="ត្រឡប់​ក្រោយ">
-              <input type="submit" class="btn btn-primary submit-button ml-2 khmer-font2" value="បហ្ជាក់">
+              <input type="button" class="btn btn-danger submit-button mr-2 khmer-font1" onclick="location.href='select_user_type';" value="ត្រឡប់​ក្រោយ">
+              <input type="submit" class="btn btn-primary submit-button ml-2 khmer-font1" value="បហ្ជាក់">
             </div>
           {% endif %}
 
