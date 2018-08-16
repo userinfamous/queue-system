@@ -146,7 +146,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.1.2/jquery.floatThead.js"></script>
 
 <!-- Custom Jquert, this one is general for all template so it stays here-->
-<script src="http://is-02.ciafirst.edu/js/workspace.js"></script>
+<script src="http://localhost/js/workspace.js"></script>
 
 <!-- Ajax for workspace, this is the refresh page (not the activator or the controller page), that is at request_advance.html -->
 <script>
@@ -154,15 +154,15 @@
     var update = docCookies.getItem('update_workspace');
     if (update == 'true') {
       location.reload(true);
-      docCookies.removeItem('update_workspace'[, path[, http://is-02.ciafirst.edu:88]])
+      docCookies.removeItem('update_workspace')
     }
   }, 500);
 
   $('body').on('click', '#complete-button', function(){
-      docCookies.setItem('update_display', 'true', 1, "http://is-02.ciafirst.edu:88");
+      docCookies.setItem('update_display', 'true', 1);
   });
   $('body').on('click', '#call-button', function(){
-      docCookies.setItem('update_display', 'true', 1, "http://is-02.ciafirst.edu:88");
+      docCookies.setItem('update_display', 'true', 1);
   });
 </script>
 

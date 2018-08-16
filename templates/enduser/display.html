@@ -37,10 +37,10 @@
 {% block custom_scripts %}
 <script>
   setInterval(function(){
-    var update= Cookies.get('update_display');
+    var update=  docCookies.get('update_display');
     if (update == 'true') {
       location.reload(true);
-      docCookies.removeItem('update_display'[, path[, http://is-02.ciafirst.edu:88]])
+      docCookies.removeItem('update_display')
     }
   }, 500);
 </script>
