@@ -376,6 +376,9 @@ def display():
 @app.route('/entry_call/<string:number>', methods=['POST'])
 @login_required
 def entry_call(number):
+    for char in session["username"]:
+        if char.isnumeric():
+            session["counter_number"] = char
     #Create dictionary cursor
     cur = mysql.connection.cursor()
     #Update total_queue Set Status to be In Progress

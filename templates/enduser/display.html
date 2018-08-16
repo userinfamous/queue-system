@@ -22,10 +22,12 @@
       {% if queue.Parent_name %}
         <div id="display-name"><p> {{queue.Parent_name}} </p></div>
         <div id="display-info"><p>Please go to the {{queue.Department}} Department office. </p></div>
+        <div id="display-info"><p>Counter {{session.counter_number}} </p></div>
 
       {% elif queue.Student_name %}
         <div id="display-name"><p> {{queue.Student_name}} </p></div>
         <div id="display-info"><p>Please go to the {{queue.Department}} Department office. </p></div>
+        <div id="display-info"><p>Counter {{session.counter_number}} </p></div>
       {% endif %}
     {% endfor %}
 
