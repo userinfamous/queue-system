@@ -151,18 +151,18 @@
 <!-- Ajax for workspace, this is the refresh page (not the activator or the controller page), that is at request_advance.html -->
 <script>
   setInterval(function(){
-    var update= Cookies.get('update_workspace');
+    var update = docCookies.getItem('update_workspace');
     if (update == 'true') {
       location.reload(true);
-      Cookies.remove('update_workspace');
+      docCookies.removeItem('update_workspace'[, path[, http://is-02.ciafirst.edu:88]])
     }
   }, 500);
 
   $('body').on('click', '#complete-button', function(){
-      Cookies.set('update_display', 'true', {expires: 1}); //expires after 1 day
+      docCookies.setItem('update_display', 'true', 1, "http://is-02.ciafirst.edu:88");
   });
   $('body').on('click', '#call-button', function(){
-      Cookies.set('update_display', 'true', {expires: 1}); //expires after 1 day
+      docCookies.setItem('update_display', 'true', 1, "http://is-02.ciafirst.edu:88");
   });
 </script>
 

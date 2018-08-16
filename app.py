@@ -272,7 +272,7 @@ def workspace():
     ON (total_queue.Request_type = request_types.Request_type)
     WHERE request_types.Department = %s AND total_queue.Status != %s""", (session["department"], ["Completed"])) #!= accounts for waiting numbers too
     #if admin presses reassign button
-    if request.method == 'POST':
+    if request.method == 'POST' and form.validate():
         #Get request_type from reassign form
         reassign = form.en_Assign.data
         #Select all in progress
@@ -378,11 +378,11 @@ def display():
 def entry_call(number):
     for char in session["username"]:
         if char.isnumeric():
-            session["counter_number"] = char
+            counter_number = char
     #Create dictionary cursor
     cur = mysql.connection.cursor()
     #Update total_queue Set Status to be In Progress
-    cur.execute("UPDATE total_queue SET Status=%s WHERE Number=%s",("In Progress",[number] ))
+    cur.execute("UPDATE total_queue SET Status=%s, Counter_number=%s WHERE Number=%s",("In Progress",[counter_number],[number]))
     #Commit to database
     mysql.connection.commit()
     #Close connection
@@ -457,26 +457,77 @@ class RequestBasicForm(Form):
         validators.Length(min=0, max=10)] ) #interger field to trigger number pad
     kh_Contact = StringField('លេខទូរសព្ទ',[
         validators.Length(min=0, max=20)] ) #interger field to trigger number pad
-
+class RequestAdvanceForm(Form):
+    en_Parent = SelectField('',
+        choices = [(-1,'<Select Request Type>'),
+        #Academic
+        ('Academic Section', (
+            ('Academic Enquiry','Academic Enquiry/Other'),
+            ('Academic Paperwork','Academic Paperwork'),
+            ('Transcript/Report Card','Transcript/Report Card')
+        )),
+        #Accounitng
+        ('Accounting Section', (
+            ('Finance Enquiry','Finance Enquiry/Other'),
+            ('Payment','Payment'),
+            ('Tuition Fee','Tuition Fee')
+        )),
+        #Front Desk
+        ('Front Desk Section', (
+            ('General Enquiry','General Enquiry/Other'),
+            ('Enrollment','Enrollment'),
+            ('Reenrollment','Reenrollment'),
+            ('Bus Service','Bus Service'),
+            ('Appointment','Appointment')
+        ))
+        ]
+    )
+    en_Student = SelectField('',
+    choices = [(-1,'<Select Request Type>'),
+            #Academic
+            ('Academic Section', (
+                ('Academic Enquiry','Academic Enquiry/Other'),
+                ('Academic Paperwork','Academic Paperwork'),
+                ('Transcript/Report Card','Transcript/Report Card')
+            )),
+            #Accounitng
+            ('Accounting Section', (
+                ('Finance Enquiry','Finance Enquiry/Other'),
+                ('Payment','Payment'),
+                ('Tuition Fee','Tuition Fee')
+            )),
+            #Front Desk
+            ('Front Desk Section', (
+                ('General Enquiry','General Enquiry/Other'),
+                ('Enrollment','Enrollment'),
+                ('Reenrollment','Reenrollment'),
+                ('Late Slip','Late Slip'),
+                ('Leave Early','Leave Early'),
+                ('Bus Service','Bus Service'),
+                ('Lost and Found','Lost and Found'),
+                ('Appointment','Appointment'),
+            ))
+            ]
+        )
 #reassign form class
 class WorkspaceForm(Form):
     en_Assign = SelectField( '',
         choices = [(-1,'<Select Request Type>'),
         #Academic
         ('Academic Section', (
-            ('Academic Enquiry','Academic Enquiry'),
+            ('Academic Enquiry','Academic Enquiry/Other'),
             ('Academic Paperwork','Academic Paperwork'),
             ('Transcript/Report Card','Transcript/Report Card')
         )),
         #Accounitng
         ('Accounting Section', (
-            ('Finance Enquiry','Finance Enquiry'),
+            ('Finance Enquiry','Finance Enquiry/Other'),
             ('Payment','Payment'),
             ('Tuition Fee','Tuition Fee')
         )),
         #Front Desk
         ('Front Desk Section', (
-            ('General Enquiry','General Enquiry'),
+            ('General Enquiry','General Enquiry/Other'),
             ('Enrollment','Enrollment'),
             ('Reenrollment','Reenrollment'),
             ('Late Slip','Late Slip'),

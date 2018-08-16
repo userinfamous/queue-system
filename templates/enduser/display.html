@@ -5,6 +5,16 @@
   <div class=" middle text-center">
 
     {% for queue in queues %}
+
+      {% if queue.Parent_name %}
+        <div id="display-name"><p> {{queue.Parent_name}} </p></div>
+        <div id="display-info"><p>Please go to <strong>Counter {{queue.Counter_number}}</strong> of the {{queue.Department}} Department office. </p></div>
+
+      {% elif queue.Student_name %}
+        <div id="display-name"><p> {{queue.Student_name}} </p></div>
+        <div id="display-info"><p>Please go to <strong>Counter {{queue.Counter_number}}</strong> of the {{queue.Department}} Department office. </p></div>
+      {% endif %}
+
       {%if queue.Department == 'Academic' %}
         <div class="box">
           <img class="rotate180" src="/static/images/arrow-right.svg" alt="" width="350" height="350">
@@ -18,17 +28,6 @@
           <img class="rotate90" src="/static/images/arrow-right.svg" alt="" width="350" height="350">
         </div>
       {% endif %}
-
-      {% if queue.Parent_name %}
-        <div id="display-name"><p> {{queue.Parent_name}} </p></div>
-        <div id="display-info"><p>Please go to the {{queue.Department}} Department office. </p></div>
-        <div id="display-info"><p>Counter {{session.counter_number}} </p></div>
-
-      {% elif queue.Student_name %}
-        <div id="display-name"><p> {{queue.Student_name}} </p></div>
-        <div id="display-info"><p>Please go to the {{queue.Department}} Department office. </p></div>
-        <div id="display-info"><p>Counter {{session.counter_number}} </p></div>
-      {% endif %}
     {% endfor %}
 
   </div>
@@ -41,7 +40,7 @@
     var update= Cookies.get('update_display');
     if (update == 'true') {
       location.reload(true);
-      Cookies.remove('update_display');
+      docCookies.removeItem('update_display'[, path[, http://is-02.ciafirst.edu:88]])
     }
   }, 500);
 </script>

@@ -52,7 +52,7 @@
 <!-- Ajax: This is the controller page script to activate refresh on workspace -->
 <script>
   $('body').on('click', '#submit-info-button', function(){
-      Cookies.set('update_workspace', 'true', {expires: 1}); //expires after 1 day
+      docCookies.setItem('update_workspace', 'true', 1, "http://is-02.ciafirst.edu:88");
   });
 </script>
 
