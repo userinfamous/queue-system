@@ -9,24 +9,26 @@
 
         <form method="POST" action="">
 
-          {% include 'includes/_logo.html' %} <!-- CIA First Logo-->
+          <div class="box">
+            <img class="mb-4" src="/static/images/logo.png" alt="" width="300" height="200">
+          </div>
 
           <h3 class="text-center mb-3 pb-3"> Create Admin Account </h3>
 
           <div class="form-group">
-            {{ render_field(form.Name, class="form-control")}}
+            {{ render_field(form.Name, class="form-control",placeholder="*Required")}}
           </div>
           <div class="form-group">
-            {{ render_field(form.Email, class="form-control")}}
+            {{ render_field(form.Email, class="form-control",placeholder="*Required")}}
           </div>
           <div class="form-group">
-            {{ render_field(form.Username, class="form-control")}}
+            {{ render_field(form.Username, class="form-control",placeholder="*Required")}}
           </div>
           <div class="form-group">
-            {{ render_field(form.Password, class="form-control")}}
+            {{ render_field(form.Password, class="form-control",placeholder="*Required")}}
           </div>
           <div class="form-group">
-            {{ render_field(form.Confirm, class="form-control")}}
+            {{ render_field(form.Confirm, class="form-control",placeholder="*Required")}}
           </div>
           <div class="form-group">
             {{ render_field(form.Department, class="form-control")}}

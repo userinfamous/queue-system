@@ -1,59 +1,41 @@
 {% extends 'layout.html' %}
-
 {% block body %}
   {% from "includes/_form_helpers.html" import render_field %}
-
   <div class="outer">
     <div class="middle">
       <div class="container">
+        <h3 class="text-center mb-3 pb-3">
+          {% if session.selected_language == 'English'%} Please Choose a Request Type
+          {% elif session.selected_language == 'Khmer' %}<span class="khmer-font2"> សូមជ្រើសរើស </span>{% endif %}
+        </h3>
 
         <form method="POST" action="">
-
-          <h3 class="text-center mb-3 pb-3">
-            {% if session.selected_language == 'English'%} Please Choose a Request Type
-            {% elif session.selected_language == 'Khmer' %}<span class="khmer-font2"> សូមជ្រើសរើស </span>{% endif %}
-          </h3>
-
           <!-- Submit Button -->
           {% if session.selected_language == 'English' %} <!-- If user picked english-->
-
             <div class="row">
-              <div class="col-sm-12 text-center mb-3">{{render_field(form.en_Assign,class="form-control")}}</div>
+              {% if session.user_type == 'Parent' %}
+                <div class="col-sm-12 text-center mb-3">{{render_field(form.en_Parent,class="form-control")}}</div>
+              {% elif session.user_type == 'Student '%}
+                <div class="col-sm-12 text-center mb-3">{{render_field(form.en_Parent,class="form-control")}}</div>
+              {% elif session.user_type == 'Visitor' %}
+                <div class="col-sm-12 text-center mb-3">{{render_field(form.en_Visitor,class="form-control")}}</div>
+              {% endif %}
             </div>
-
             <div class="box mt-4">
               <input type="submit" class="btn btn-danger submit-button mr-2 " name="Back" value="Back">
               <input id="submit-info-button" type="submit" class="btn btn-primary submit-button ml-2" name="Confirm" value="Confirm">
             </div>
-
           {% elif session.selected_language == 'Khmer' %}
-
             <div class="row">
               <div class="col-sm-12 text-center mb-3 khmer-font1">{{render_field(form.kh_Assign,class="form-control")}}</div>
             </div>
-
             <div class="box mt-4">
               <input type="submit" class="btn btn-danger submit-button mr-2 khmer-font1" name="Back" value="ត្រឡប់​ក្រោយ">
               <input id="submit-info-button" type="submit" class="btn btn-primary submit-button ml-2 khmer-font1" name="Confirm" value="បហ្ជាក់">
             </div>
-
           {% endif %}
-
         </form>
-
       </div>
     </div>
   </div>
-
-{% endblock %}
-
-{% block custom_scripts %}
-
-<!-- Ajax: This is the controller page script to activate refresh on workspace -->
-<script>
-  $('body').on('click', '#submit-info-button', function(){
-      docCookies.setItem('update_workspace', 'true', 1);
-  });
-</script>
-
 {% endblock %}

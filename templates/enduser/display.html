@@ -1,5 +1,4 @@
 {% extends 'layout.html'%}
-
 {% block body %}
 <div class="outer">
   <div class=" middle text-center">
@@ -29,20 +28,6 @@
         </div>
       {% endif %}
     {% endfor %}
-
   </div>
 </div>
-{% endblock %}
-
-{% block custom_scripts %}
-<script>
-  setInterval(function(){
-    var update=  docCookies.get('update_display');
-    if (update == 'true') {
-      location.reload(true);
-      docCookies.removeItem('update_display')
-    }
-  }, 500);
-</script>
-
 {% endblock %}

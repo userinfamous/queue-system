@@ -1,4 +1,4 @@
-#Author: Vuottek Un (Test1)
+#Author: Vuottek Un
 #Project Title: Queue-System
 #Description:
 #   The upper parts are imports and declaration of the app
@@ -22,6 +22,7 @@ from datetime import timedelta
 
 #app is the name of the flask app
 app = Flask(__name__)
+
 #necessary for session to work
 app.secret_key = "i7T7e@CkqVkuHT5Lo9PH9xeg"
 
@@ -52,7 +53,6 @@ def select_language():
 #End-User second page. Select user type from (parent/student/visitor)
 @app.route('/select_user_type',methods=['GET','POST'])
 def select_user_type():
-
     #Check for sessions for it to work properly
     if "selected_language" not in session:
         flash("You do not have the necessary data to pass through.","danger")
@@ -110,9 +110,8 @@ def request_advance():
         if cookie not in session:
             flash("You do not have the necessary data to pass through.","danger")
             return redirect(url_for('select_language'))
-
     #Make a request form class object and pass in request data from template to the object
-    form = WorkspaceForm(request.form)
+    form = RequestAdvanceForm(request.form)
     #If End-User select a request_type
     if request.method == 'POST' and request.form.get("Back"):
         cur = mysql.connection.cursor()
@@ -133,15 +132,25 @@ def request_advance():
         return redirect(url_for('request_basic'))
 
     elif request.method == 'POST' and request.form.get("Confirm"):
+
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE check_changes SET counting = counting + 1 WHERE id=1")
+        cur.close()
+
         if session["selected_language"] == 'English':
-            request_type = form.en_Assign.data
+            if session["user_type"] == "Parent":
+                request_type = form.en_Parent.data
+            elif session["user_type"] == "Student":
+                request_type = form.en_Student.data
+            elif session["user_type"] == "Visitor":
+                request_type = form.en_Visitor.data
         elif session["selected_language"] == 'Khmer':
             request_type = form.kh_Assign.data
 
         #Connect to MySQL server and traverse the database with a dictionary cursor
         cur = mysql.connection.cursor()
         #check for recent entries formed by request basic in the database
-        recent = cur.execute("SELECT * FROM total_queue WHERE Status=%s AND Request_type='' AND Student_name=%s ", (["Waiting"],session["student_name"]))
+        recent = cur.execute("SELECT * FROM total_queue WHERE Status=%s AND Request_type='' AND Student_name=%s ORDER BY Number ASC", (["Waiting"],session["student_name"]))
         #Get that student number or current postion in the queue
         number = cur.fetchone()["Number"]
         #Update total_queue, the Request_type using current queue position
@@ -172,6 +181,10 @@ def request_advance():
         #Return to index
         return redirect(url_for('select_language'))
     return render_template('enduser/request_advance.html',form=form)
+
+@app.route('/checker',methods=['GET','POST'])
+def checker():
+    return render_template('admin/checker.php')
 
 #Admin Registeration page, can technically be accessed by anyone
 @app.route('/register',methods=['GET','POST'])
@@ -270,9 +283,10 @@ def workspace():
     results = cur.execute("""SELECT *
     FROM total_queue JOIN (request_types)
     ON (total_queue.Request_type = request_types.Request_type)
-    WHERE request_types.Department = %s AND total_queue.Status != %s""", (session["department"], ["Completed"])) #!= accounts for waiting numbers too
+    WHERE request_types.Department = %s AND total_queue.Status != %s
+    ORDER BY Number ASC""", (session["department"], ["Completed"])) #!= accounts for waiting numbers too
     #if admin presses reassign button
-    if request.method == 'POST' and form.validate():
+    if request.method == 'POST':
         #Get request_type from reassign form
         reassign = form.en_Assign.data
         #Select all in progress
@@ -458,8 +472,8 @@ class RequestBasicForm(Form):
     kh_Contact = StringField('លេខទូរសព្ទ',[
         validators.Length(min=0, max=20)] ) #interger field to trigger number pad
 class RequestAdvanceForm(Form):
-    en_Parent = SelectField('',
-        choices = [(-1,'<Select Request Type>'),
+    en_Parent = SelectField('',[validators.DataRequired()],
+        choices = [('','<Select Request Type>'),
         #Academic
         ('Academic Section', (
             ('Academic Enquiry','Academic Enquiry/Other'),
@@ -479,11 +493,37 @@ class RequestAdvanceForm(Form):
             ('Reenrollment','Reenrollment'),
             ('Bus Service','Bus Service'),
             ('Appointment','Appointment')
-        ))
+        )),
         ]
     )
-    en_Student = SelectField('',
-    choices = [(-1,'<Select Request Type>'),
+
+    en_Student = SelectField('',[validators.DataRequired()],
+        choices = [('','<Select Request Type>'),
+                #Academic
+                ('Academic Section', (
+                    ('Academic Enquiry','Academic Enquiry/Other'),
+                    ('Academic Paperwork','Academic Paperwork'),
+                    ('Transcript/Report Card','Transcript/Report Card')
+                )),
+                #Accounitng
+                ('Accounting Section', (
+                    ('Finance Enquiry','Finance Enquiry/Other'),
+                    ('Payment','Payment'),
+                    ('Tuition Fee','Tuition Fee')
+                )),
+                #Front Desk
+                ('Front Desk Section', (
+                    ('General Enquiry','General Enquiry/Other'),
+                    ('Late Slip','Late Slip'),
+                    ('Leave Early','Leave Early'),
+                    ('Bus Service','Bus Service'),
+                    ('Lost and Found','Lost and Found'),
+                    ('Appointment','Appointment'),
+                ))
+                ]
+            )
+    en_Visitor= SelectField( '',[validators.DataRequired()],
+        choices = [('','<Select Request Type>'),
             #Academic
             ('Academic Section', (
                 ('Academic Enquiry','Academic Enquiry/Other'),
@@ -501,18 +541,17 @@ class RequestAdvanceForm(Form):
                 ('General Enquiry','General Enquiry/Other'),
                 ('Enrollment','Enrollment'),
                 ('Reenrollment','Reenrollment'),
-                ('Late Slip','Late Slip'),
-                ('Leave Early','Leave Early'),
                 ('Bus Service','Bus Service'),
-                ('Lost and Found','Lost and Found'),
                 ('Appointment','Appointment'),
+                ('Business Meeting','Business Meeting'),
+                ('Job Interview','Job Interview')
             ))
             ]
-        )
+    )
 #reassign form class
 class WorkspaceForm(Form):
-    en_Assign = SelectField( '',
-        choices = [(-1,'<Select Request Type>'),
+    en_Assign = SelectField('',[validators.DataRequired()],
+        choices = [('','<Select Request Type>'),
         #Academic
         ('Academic Section', (
             ('Academic Enquiry','Academic Enquiry/Other'),
@@ -541,8 +580,8 @@ class WorkspaceForm(Form):
         ]
     )
 
-    kh_Assign = SelectField( '',
-        choices = [(-1,'ជ្រើសរើសលក្ខណៈនៃការស្នើសុំ'),
+    kh_Assign = SelectField( '',[validators.DataRequired()],
+        choices = [('','ជ្រើសរើសលក្ខណៈនៃការស្នើសុំ'),
         #Academic
         ('ផ្នែកសិក្សា', (
             ('Academic Enquiry','សំណួរអំពីផ្នែកការសិក្សា'),
@@ -589,8 +628,8 @@ class RegisterForm(Form):
     Confirm = PasswordField('Confirm Password', [
         validators.DataRequired(),
     ])
-    Department = SelectField( 'Select Department',
-        choices = [(-1,'<Select Department>'),('Accounting','Accounting Department'), ('Front Desk','Front Desk'), ('Academic','Academic Department')]
+    Department = SelectField( 'Select Department',[validators.DataRequired()],
+        choices = [('','<Select Department>'),('Accounting','Accounting Department'), ('Front Desk','Front Desk'), ('Academic','Academic Department')]
     )
 
 # if name of app is main

@@ -18,7 +18,7 @@ th, td, #flashes {
   font-family: 'Muli', sans-serif;
 }
 
-button, input, p, span, h3 {
+button, input, p, h3 {
   font-family: 'Abel', sans-serif;
 }
 
@@ -73,7 +73,10 @@ inner: an addon for making content under middle class appear a certain way.
 .submit-button {
   width: 150px;
 }
-
+.submit-button-bigger {
+  width: 200px;
+  height: 200px;
+}
 .clear {
   clear:both;
 }
@@ -130,7 +133,6 @@ thead,table.floatThead-table{
 #display-info {
   font-size: 4vw;
 }
-
 /* Dashboard Sidebar */
 .sidebar {
   position: fixed;

@@ -1,4 +1,9 @@
+<?php
+define('__ROOT__', dirname(dirname(__FILE__)));
+require(__ROOT__.'/common.php');
+?>
 {% extends 'layout.html' %}
+
 {% block body %}
   {% from "includes/_form_helpers.html" import render_field %}
 
@@ -72,15 +77,11 @@
             </thead>
             <tbody>
               <!-- Queue Container -->
+              <div id="message-list" data-counter="<?php echo (int) $db->check_changes();?>">
+                <?php echo $db->get_news();?>
+              </div>
               {% for queue in queues %}
               <tr>
-                <td>{{queue.User_type}}</td>
-                <td>{{queue.Contact}}</td>
-                <td>{{queue.Parent_name}}</td>
-                <td>{{queue.Student_name}}</td>
-                <td>{{queue.Student_id}}</td>
-                <td>{{queue.Request_type}}</td>
-
                 <td>
                 <!-- If the queue is on top -->
                 {% if queue == queues[0] %}
@@ -89,7 +90,6 @@
                     <input type="hidden" name="method" value="CALL">
                     <input id="call-button" type="submit" value="Call Number" class="btn btn-warning">
                   </form>
-                  <td></td> <!-- Blank just to even out the spacing-->
                   {% else %} <!-- If status is in progress or admin pressed Call Number, load the reassign table -->
                     {{queue.Status}}
                 </td>
@@ -109,7 +109,6 @@
                   </form>
                 </td>
                   {% endif %}
-
                 {% else %}
                 <td></td>
                 <td></td>
@@ -132,9 +131,9 @@
 
 {% block custom_scripts %}
 <!-- Making Table Headers stick to the top (we don't need this on every page)-->
-<script type=text/javascript src="{{url_for('static', filename='jquery.floatThead.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.1.2/jquery.floatThead.js"></script>
 <!-- Custom Jquert, this one is general for all template so it stays here-->
-<script type=text/javascript src="{{url_for('static', filename='workspace.js') }}"></script>
+<script src="http://localhost/js/workspace.js"></script>
 
 <script>
   /* AJAX request to checker */
@@ -144,15 +143,14 @@
       url: 'checker',
       dataType: 'json',
       data: {
-        counter:$('#queue-list').data('counter')
+        counter:$('#message-list').data('counter')
       }
     }).done(function( response ) {
       /* update counter */
-      $('#queue-list').data('counter',response.current);
+      $('#message-list').data('counter',response.current);
       /* check if with response we got a new update */
       if(response.update==true){
-        $('#queue-list').html(response.news);
-        location.reload(true)
+        $('#message-list').html(response.news);
       }
     });
   }
