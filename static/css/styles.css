@@ -14,7 +14,7 @@ a, h4 {
   font-family: 'Coda', cursive;
 }
 
-th, td, #flashes {
+th, td, .flashes {
   font-family: 'Muli', sans-serif;
 }
 
@@ -35,7 +35,7 @@ button, input, p, h3 {
 }
 
 /*Flashing Messages*/
-#flashes {
+.flashes {
   border-radius: 0px;
   z-index: 1031; /*We don't want the navbar(1030) to appear over on top*/
 }

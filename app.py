@@ -12,13 +12,14 @@
 # Each department has got their own table (i.e accounting_queue and front_desk_queue) It's for recording time in and time out in the respective deparment
 
 #Importing necessary dependencies for the project
-from flask import Flask, render_template, redirect, flash, url_for, request, session, logging
+from flask import Flask, render_template, redirect, flash, url_for, request, session, logging, jsonify
 from flask_mysqldb import MySQL
-from wtforms import Form, StringField, TextAreaField, SelectField, IntegerField, PasswordField, validators
+from wtforms import Form, StringField, TextAreaField, SelectField, IntegerField, PasswordField, validators, SubmitField
 from wtforms_components.fields import SelectField
 from passlib.hash import sha256_crypt
 from helpers import login_required, collect_form_data
 from datetime import timedelta
+from json import dumps
 
 #app is the name of the flask app
 app = Flask(__name__)
@@ -43,8 +44,6 @@ def select_language():
     if request.method == 'POST':
         #Record Language
         session["selected_language"] = request.form["Selected_language"]
-        #Show debug message
-        flash('Selected ' + str(session["selected_language"] + ' language'), "success")
         #rediect to the next page
         return redirect(url_for('select_user_type'))
     return render_template('enduser/select_language.html')
@@ -63,7 +62,6 @@ def select_user_type():
         #Record User type
         session["user_type"] = request.form["User_type"]
         #Show debug message
-        flash('Selected ' + str(session["user_type"] + ' Form'), "success")
         #Redirect to the next page
         return redirect(url_for('request_basic'))
     return render_template('enduser/select_user_type.html')
@@ -127,7 +125,7 @@ def request_advance():
         session.pop('parent_name',None)
 
         #Entry Deleted
-        flash("Deleted Entry from Database.","success")
+        flash("Entry deleted from the database.","success")
 
         return redirect(url_for('request_basic'))
 
@@ -145,7 +143,12 @@ def request_advance():
             elif session["user_type"] == "Visitor":
                 request_type = form.en_Visitor.data
         elif session["selected_language"] == 'Khmer':
-            request_type = form.kh_Assign.data
+            if session["user_type"] == "Parent":
+                request_type = form.kh_Parent.data
+            elif session["user_type"] == "Student":
+                request_type = form.kh_Student.data
+            elif session["user_type"] == "Visitor":
+                request_type = form.kh_Visitor.data
 
         #Connect to MySQL server and traverse the database with a dictionary cursor
         cur = mysql.connection.cursor()
@@ -183,6 +186,7 @@ def request_advance():
     return render_template('enduser/request_advance.html',form=form)
 
 @app.route('/checker',methods=['GET','POST'])
+@login_required
 def checker():
     return render_template('admin/checker.php')
 
@@ -240,19 +244,19 @@ def login():
                 session["username"] = Username
                 session["department"] = Department
                 #flash message
-                flash("You are now logged in !  (◠‿◠✿)", 'success')
+                flash("You are now logged in !", 'success')
                 #redirect to workspace
                 return redirect(url_for('workspace'))
             else:
                 #flash error message
-                error = 'Invalid Credentials. (◡︿◡✿)'
+                error = 'Invalid Credentials.'
                 #render login with error
                 return render_template('admin/login.html',error=error)
             #close connection
             cur.close()
         else:
             #flash error user not found in database
-            error = 'Username Not Found. ↁ_ↁ'
+            error = 'Username Not Found.'
             #render login with error
             return render_template('admin/login.html',error=error)
     return render_template('admin/login.html')
@@ -277,6 +281,7 @@ def workspace():
 
     #loading form class
     form = WorkspaceForm(request.form)
+
     #connect to database
     cur = mysql.connection.cursor()
     #Select all data from associated workspace
@@ -353,8 +358,7 @@ def workspace():
         mysql.connection.commit()
         #flash message
         flash('Entry Reassigned! ', 'success')
-        #return to workspace after reassign
-        return redirect(url_for('workspace'))
+        redirec(url_for('workspace'))
 
     #Fetch everything found, the reason why its after POST reassign is to update the changes we make
     queues = cur.fetchall()
@@ -471,6 +475,7 @@ class RequestBasicForm(Form):
         validators.Length(min=0, max=10)] ) #interger field to trigger number pad
     kh_Contact = StringField('លេខទូរសព្ទ',[
         validators.Length(min=0, max=20)] ) #interger field to trigger number pad
+
 class RequestAdvanceForm(Form):
     en_Parent = SelectField('',[validators.DataRequired()],
         choices = [('','<Select Request Type>'),
@@ -496,57 +501,133 @@ class RequestAdvanceForm(Form):
         )),
         ]
     )
+    kh_Parent = SelectField('',[validators.DataRequired()],
+        choices = [('','<ជ្រើសរើសលក្ខណៈនៃការស្នើសុំ>'),
+        #Academic
+        ('ផ្នែកសិក្សា', (
+            ('Academic Enquiry','សំណួរអំពីផ្នែកការសិក្'),
+            ('Academic Paperwork','ឯកសារសិក្'),
+            ('Transcript/Report Card','របាយការណ៍កាតរបស់សិស្ស')
+        )),
+        #Accounitng
+        ('ផ្នែកគណនេយ្យ', (
+            ('Finance Enquiry','សំណួរអំពីហិរញ្ញវត្ថុ'),
+            ('Payment','បង់ថ្លៃផ្សេងៗ'),
+            ('Tuition Fee','បង់ថ្លៃ​សិក្សា')
+        )),
+        #Front Desk
+        ('ផ្នែកការិយាល័យទទួលភ្ញៀវ', (
+            ('General Enquiry','ការសាកសួរជាទូទៅ'),
+            ('Enrollment','ចុះឈ្មោះចូលរៀនលើកដំបូង'),
+            ('Reenrollment','ចុះឈ្មោះចូលរៀនសារ​ជា​ថ្មី'),
+            ('Bus Service','សេវាកម្មឡានក្រុង'),
+            ('Appointment','ការណាត់ជួប')
+        )),
+        ]
+    )
 
     en_Student = SelectField('',[validators.DataRequired()],
         choices = [('','<Select Request Type>'),
-                #Academic
-                ('Academic Section', (
-                    ('Academic Enquiry','Academic Enquiry/Other'),
-                    ('Academic Paperwork','Academic Paperwork'),
-                    ('Transcript/Report Card','Transcript/Report Card')
-                )),
-                #Accounitng
-                ('Accounting Section', (
-                    ('Finance Enquiry','Finance Enquiry/Other'),
-                    ('Payment','Payment'),
-                    ('Tuition Fee','Tuition Fee')
-                )),
-                #Front Desk
-                ('Front Desk Section', (
-                    ('General Enquiry','General Enquiry/Other'),
-                    ('Late Slip','Late Slip'),
-                    ('Leave Early','Leave Early'),
-                    ('Bus Service','Bus Service'),
-                    ('Lost and Found','Lost and Found'),
-                    ('Appointment','Appointment'),
-                ))
-                ]
-            )
-    en_Visitor= SelectField( '',[validators.DataRequired()],
+        #Academic
+        ('Academic Section', (
+            ('Academic Enquiry','Academic Enquiry/Other'),
+            ('Academic Paperwork','Academic Paperwork'),
+            ('Transcript/Report Card','Transcript/Report Card')
+        )),
+        #Accounitng
+        ('Accounting Section', (
+            ('Finance Enquiry','Finance Enquiry/Other'),
+            ('Payment','Payment'),
+            ('Tuition Fee','Tuition Fee')
+        )),
+        #Front Desk
+        ('Front Desk Section', (
+            ('General Enquiry','General Enquiry/Other'),
+            ('Late Slip','Late Slip'),
+            ('Leave Early','Leave Early'),
+            ('Bus Service','Bus Service'),
+            ('Lost and Found','Lost and Found'),
+            ('Appointment','Appointment'),
+        ))
+        ]
+    )
+
+    kh_Student = SelectField('',[validators.DataRequired()],
+        choices = [('','ជ្រើសរើសលក្ខណៈនៃការស្នើសុំ'),
+        #Academic
+        ('ផ្នែកសិក្សា', (
+            ('Academic Enquiry','សំណួរអំពីផ្នែកការសិក្សា'),
+            ('Academic Paperwork','ឯកសារសិក្សា'),
+            ('Transcript/Report Card','របាយការណ៍កាតរបស់សិស្ស')
+        )),
+        #Accounitng
+        ('ផ្នែកគណនេយ្យ', (
+            ('Finance Enquiry','សំណួរអំពីហិរញ្ញវត្ថុ'),
+            ('Payment','បង់ថ្លៃផ្សេងៗ'),
+            ('Tuition Fee','បង់ថ្លៃ​សិក្សា')
+        )),
+        #Front Desk
+        ('ផ្នែកការិយាល័យទទួលភ្ញៀវ', (
+            ('General Enquiry','ការសាកសួរជាទូទៅ'),
+            ('Late Slip','ក្រដាសយឺតសម្រាប់មកយឺត'),
+            ('Leave Early','ចាកចេញមុនម៉ោង'),
+            ('Bus Service','សេវាកម្មឡានក្រុង'),
+            ('Lost and Found','បាត់បង់អ្វីមួយ'),
+            ('Appointment','ការណាត់ជួប'),
+        ))
+        ]
+    )
+    en_Visitor = SelectField('',[validators.DataRequired()],
         choices = [('','<Select Request Type>'),
-            #Academic
-            ('Academic Section', (
-                ('Academic Enquiry','Academic Enquiry/Other'),
-                ('Academic Paperwork','Academic Paperwork'),
-                ('Transcript/Report Card','Transcript/Report Card')
-            )),
-            #Accounitng
-            ('Accounting Section', (
-                ('Finance Enquiry','Finance Enquiry/Other'),
-                ('Payment','Payment'),
-                ('Tuition Fee','Tuition Fee')
-            )),
-            #Front Desk
-            ('Front Desk Section', (
-                ('General Enquiry','General Enquiry/Other'),
-                ('Enrollment','Enrollment'),
-                ('Reenrollment','Reenrollment'),
-                ('Bus Service','Bus Service'),
-                ('Appointment','Appointment'),
-                ('Business Meeting','Business Meeting'),
-                ('Job Interview','Job Interview')
-            ))
-            ]
+        #Academic
+        ('Academic Section', (
+            ('Academic Enquiry','Academic Enquiry/Other'),
+            ('Academic Paperwork','Academic Paperwork'),
+            ('Transcript/Report Card','Transcript/Report Card')
+        )),
+        #Accounitng
+        ('Accounting Section', (
+            ('Finance Enquiry','Finance Enquiry/Other'),
+            ('Payment','Payment'),
+            ('Tuition Fee','Tuition Fee')
+        )),
+        #Front Desk
+        ('Front Desk Section', (
+            ('General Enquiry','General Enquiry/Other'),
+            ('Enrollment','Enrollment'),
+            ('Reenrollment','Reenrollment'),
+            ('Bus Service','Bus Service'),
+            ('Appointment','Appointment'),
+            ('Business Meeting','Business Meeting'),
+            ('Job Interview','Job Interview')
+        ))
+        ]
+    )
+    kh_Visitor = SelectField('',[validators.DataRequired()],
+        choices = [('','ជ្រើសរើសលក្ខណៈនៃការស្នើសុំ'),
+        #Academic
+        ('ផ្នែកសិក្សា', (
+            ('Academic Enquiry','សំណួរអំពីផ្នែកការសិក្សា'),
+            ('Academic Paperwork','ឯកសារសិក្សា'),
+            ('Transcript/Report Card','របាយការណ៍កាតរបស់សិស្ស')
+        )),
+        #Accounitng
+        ('ផ្នែកគណនេយ្យ', (
+            ('Finance Enquiry','សំណួរអំពីហិរញ្ញវត្ថុ'),
+            ('Payment','បង់ថ្លៃផ្សេងៗ'),
+            ('Tuition Fee','បង់ថ្លៃ​សិក្សា')
+        )),
+        #Front Desk
+        ('ផ្នែកការិយាល័យទទួលភ្ញៀវ', (
+            ('General Enquiry','ការសាកសួរជាទូទៅ'),
+            ('Enrollment','ចុះឈ្មោះចូលរៀនលើកដំបូង'),
+            ('Reenrollment','ចុះឈ្មោះចូលរៀនសារ​ជា​ថ្មី'),
+            ('Bus Service','សេវាកម្មឡានក្រុង'),
+            ('Appointment','ការណាត់ជួប'),
+            ('Business Meeting','មានកិច្ចប្រជុំ'),
+            ('Job Interview','សំភាសន៍ការងារ')
+        ))
+        ]
     )
 #reassign form class
 class WorkspaceForm(Form):

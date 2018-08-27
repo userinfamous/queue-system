@@ -81,18 +81,20 @@ class db{
 	 * @return void
 	 */
 	function get_news() {
-		if($result = $this->db->query('SELECT * FROM total_queue WHERE Number<>1 ORDER BY Number DESC LIMIT 50')){
+		if($result = $this->db->query('SELECT * FROM total_queue WHERE Number<>1 ORDER BY Number ASC')){
 			$return = '';
 			while($r = $result->fetch_object()){
-				$return .= '<table>';
-				$return .= '<td>'.$r->Number.'</td>';
+				$return .= '<tr>';
 				$return .= '<td>'.htmlspecialchars($r->User_type).'</td>';
 				$return .= '<td>'.htmlspecialchars($r->Contact).'</td>';
 				$return .= '<td>'.htmlspecialchars($r->Parent_name).'</td>';
 				$return .= '<td>'.htmlspecialchars($r->Student_name).'</td>';
 				$return .= '<td>'.htmlspecialchars($r->Student_id).'</td>';
 				$return .= '<td>'.htmlspecialchars($r->Request_type).'</td>';
-				$return .= '</table>';
+				$return .= '<td></td>';
+				$return .= '<td></td>';
+				$return .= '<td></td>';
+				$return .= '</tr>';
 			}
 			return $return;
 		}

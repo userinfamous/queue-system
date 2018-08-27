@@ -11,50 +11,39 @@
     </ul>
   </nav>
 
-
   <div class="container-fluid">
     <div class="row">
       <nav class="col-md-2 d-none d-md-block bg-light sidebar">
         <div class="sidebar-sticky">
-
           <ul class="nav flex-column">
             <li class="nav-item">
               <a class="nav-link active" href="/workspace"><i class="fas fa-home"></i> Workspace </a>
             </li>
           </ul>
-
           <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
             <span>Control Flow</span>
           </h6>
-
           <ul class="nav flex-column mb-2">
-
             <li class="nav-item">
               <a class="nav-link" href="#"><i class="fas fa-envelope"></i> Recent Requests (1-10) </a>
             </li>
-
-            <li class="av-item">
+            <li class="nav-item">
               <a class="nav-link" href="#"><i class="fas fa-archive"></i> Archive </a>
             </li>
-
             <li class="nav-item">
               <a class="nav-link" href="#"><i class="fas fa-undo"></i> Undo </a>
             </li>
-
             <li class="nav-item">
               <a class="nav-link" href="#"><i class="fas fa-expand-arrows-alt"></i> Reassign </a>
             </li>
-
           </ul>
         </div>
       </nav>
 
       <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
           <h1> {{session.department}} Queue</h1>
         </div>
-
         <div class="table-responsive queue-container">
           <table  class=" table table-striped table-sm workspace-table">
             <thead>
@@ -80,7 +69,6 @@
                 <td>{{queue.Student_name}}</td>
                 <td>{{queue.Student_id}}</td>
                 <td>{{queue.Request_type}}</td>
-
                 <td>
                 <!-- If the queue is on top -->
                 {% if queue == queues[0] %}
@@ -141,7 +129,7 @@
   function check(){
     $.ajax({
       type: 'POST',
-      url: 'checker',
+      url: 'checker.php',
       dataType: 'json',
       data: {
         counter:$('#queue-list').data('counter')

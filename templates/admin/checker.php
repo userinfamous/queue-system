@@ -7,7 +7,6 @@ $data['update'] = false;
 //and check if that counter is diffrent from the one in database
 if(isset($_POST) && !empty($_POST['counter']) && (int)$_POST['counter']!=$data['current']){
 	//the counters are diffrent so get new message list
-	$data['news'] = '<h1>OMG! It\'s alive!!! NEW UPDATE !!!</h1>';
 	$data['news'] .= $db->get_news();
 	$data['update'] = true;
 }
