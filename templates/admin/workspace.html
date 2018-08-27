@@ -1,8 +1,7 @@
 {% extends 'layout.html' %}
 {% block body %}
   {% from "includes/_form_helpers.html" import render_field %}
-
-  <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+  <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow" style="display:none;">
     <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/workspace"> School Logo</a>
     <ul class="navbar-nav px-3">
       <li class="nav-item text-nowrap">
@@ -13,17 +12,19 @@
 
   <div class="container-fluid">
     <div class="row">
-      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+      <nav class="col-md-2 d-none d-md-block bg-light sidebar" style="display:none;" >
         <div class="sidebar-sticky">
+
           <ul class="nav flex-column">
             <li class="nav-item">
               <a class="nav-link active" href="/workspace"><i class="fas fa-home"></i> Workspace </a>
             </li>
           </ul>
-          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-            <span>Control Flow</span>
-          </h6>
+
+          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-2 mb-1 text-muted">Control Flow</h6>
+
           <ul class="nav flex-column mb-2">
+
             <li class="nav-item">
               <a class="nav-link" href="#"><i class="fas fa-envelope"></i> Recent Requests (1-10) </a>
             </li>
@@ -36,11 +37,13 @@
             <li class="nav-item">
               <a class="nav-link" href="#"><i class="fas fa-expand-arrows-alt"></i> Reassign </a>
             </li>
+
           </ul>
         </div>
       </nav>
 
-      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4" style="display:none">
+
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
           <h1> {{session.department}} Queue</h1>
         </div>
@@ -124,12 +127,19 @@
 <!-- Custom Jquert, this one is general for all template so it stays here-->
 <script type=text/javascript src="{{url_for('static', filename='workspace.js') }}"></script>
 
+
+<!--
+What I need to do:
+-So assuming I have the data pass onto a route
+-First I need to figure out how to send data to this location from request_advance route (Done)
+-Second I need to activate the reqfresh button
+-->
 <script>
   /* AJAX request to checker */
   function check(){
     $.ajax({
       type: 'POST',
-      url: 'checker.php',
+      url: 'request_advance',
       dataType: 'json',
       data: {
         counter:$('#queue-list').data('counter')
@@ -140,7 +150,7 @@
       /* check if with response we got a new update */
       if(response.update==true){
         $('#queue-list').html(response.news);
-        location.reload(true)
+
       }
     });
   }
