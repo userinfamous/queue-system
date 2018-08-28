@@ -77,6 +77,15 @@ def request_basic():
             flash("You do not have the necessary data to pass through.","danger")
             return redirect(url_for('select_language'))
 
+    #set the old counter
+    cur = mysql.connection.cursor()
+    select = cur.execute("SELECT * FROM total_queue WHERE Status!=%s ORDER BY Number DESC",["Completed"]) #bottom up so we can fetch one of the latest queue numbers
+    old_count = cur.fetchone()["Number"]
+    cur.execute("UPDATE check_changes SET old_counter=%s WHERE id=0",[old_count]) #The reason we put this before is to get the before entry after the entry is added after this. (see below)
+    #Commit to the database
+    mysql.connection.commit()
+    cur.close()
+
     #Make a request form class object and pass in request data from template to the object
     form = RequestBasicForm(request.form)
     #If enduser presses confirm to submit the form
@@ -108,47 +117,44 @@ def request_advance():
         if cookie not in session:
             flash("You do not have the necessary data to pass through.","danger")
             return redirect(url_for('select_language'))
+
     #Make a request form class object and pass in request data from template to the object
     form = RequestAdvanceForm(request.form)
     #If End-User select a request_type
-    if request.method == 'POST' and request.form.get("Back"):
+    if request.method == 'POST':
         cur = mysql.connection.cursor()
-        if session["user_type"] == 'Student':
-            cur.execute("DELETE FROM total_queue WHERE Student_name=%s LIMIT 1",[session["student_name"]])
-        elif session["user_type"] == 'Parent' or session["user_type"] == 'Visitor':
-            cur.execute("DELETE FROM total_queue WHERE Parent_name=%s LIMIT 1",[session["parent_name"]])
-        mysql.connection.commit()
-        cur.close()
+        cur.execute("UPDATE check_changes SET recent_counter = recent_counter + 1 WHERE id=0") #keep track of the new version of the database
+        if request.form.get("Back"):
+            cur.execute("UPDATE check_changes SET old_counter = old_counter + 1 WHERE id=0") #keep up with deleted entries
+            if session["user_type"] == 'Student':
+                cur.execute("DELETE FROM total_queue WHERE Student_name=%s LIMIT 1",[session["student_name"]])
+            elif session["user_type"] == 'Parent' or session["user_type"] == 'Visitor':
+                cur.execute("DELETE FROM total_queue WHERE Parent_name=%s LIMIT 1",[session["parent_name"]])
+            mysql.connection.commit()
+            cur.close()
+            #Pop it off, since we no longer need it
+            session.pop('student_name',None)
+            session.pop('parent_name',None)
+            #Entry Deleted
+            flash("Entry deleted from the database.","success")
+            return redirect(url_for('request_basic'))
 
-        #Pop it off, since we no longer need it
-        session.pop('student_name',None)
-        session.pop('parent_name',None)
-
-        #Entry Deleted
-        flash("Entry deleted from the database.","success")
-
-        return redirect(url_for('request_basic'))
-
-    elif request.method == 'POST' and request.form.get("Confirm"):
-
-        cur = mysql.connection.cursor()
-        cur.execute("UPDATE check_changes SET counting = counting + 1 WHERE id=1")
-        cur.close()
-
-        if session["selected_language"] == 'English':
-            if session["user_type"] == "Parent":
-                request_type = form.en_Parent.data
-            elif session["user_type"] == "Student":
-                request_type = form.en_Student.data
-            elif session["user_type"] == "Visitor":
-                request_type = form.en_Visitor.data
-        elif session["selected_language"] == 'Khmer':
-            if session["user_type"] == "Parent":
-                request_type = form.kh_Parent.data
-            elif session["user_type"] == "Student":
-                request_type = form.kh_Student.data
-            elif session["user_type"] == "Visitor":
-                request_type = form.kh_Visitor.data
+        elif request.form.get("Confirm"):
+            cur.close()
+            if session["selected_language"] == 'English':
+                if session["user_type"] == "Parent":
+                    request_type = form.en_Parent.data
+                elif session["user_type"] == "Student":
+                    request_type = form.en_Student.data
+                elif session["user_type"] == "Visitor":
+                    request_type = form.en_Visitor.data
+            elif session["selected_language"] == 'Khmer':
+                if session["user_type"] == "Parent":
+                    request_type = form.kh_Parent.data
+                elif session["user_type"] == "Student":
+                    request_type = form.kh_Student.data
+                elif session["user_type"] == "Visitor":
+                    request_type = form.kh_Visitor.data
 
         #Connect to MySQL server and traverse the database with a dictionary cursor
         cur = mysql.connection.cursor()
@@ -185,10 +191,36 @@ def request_advance():
         return redirect(url_for('select_language'))
     return render_template('enduser/request_advance.html',form=form)
 
-@app.route('/checker',methods=['GET','POST'])
-@login_required
+@app.route('/checker',methods=['GET'])
 def checker():
-    return render_template('admin/checker.php')
+    #First check the database
+    cur = mysql.connection.cursor()
+
+    select = cur.execute("SELECT old_counter FROM check_changes WHERE id=0")
+    old_count = cur.fetchone()["old_counter"]
+
+    select = cur.execute("SELECT recent_counter FROM check_changes WHERE id=0")
+    recent_count = cur.fetchone()["recent_counter"]
+
+    select = cur.execute("SELECT recent_display FROM check_changes WHERE id=0")
+    recent_display = cur.fetchone()["recent_display"]
+
+    if recent_display == 'True':
+        update_display = 1
+        cur.execute("UPDATE check_changes SET recent_display=%s WHERE id=0",["False"])
+        mysql.connection.commit()
+    else:
+        update_display = 0
+
+    if int(old_count) < int(recent_count):
+        update_workspace = 1
+        cur.execute("UPDATE check_changes SET old_counter=%s WHERE id=0",[recent_count])
+        #Commit to Database
+        mysql.connection.commit()
+    else:
+        update_workspace = 0
+    cur.close()
+    return jsonify({'update_workspace':update_workspace,'update_display': update_display})
 
 #Admin Registeration page, can technically be accessed by anyone
 @app.route('/register',methods=['GET','POST'])
@@ -354,11 +386,12 @@ def workspace():
                     #If its still in the same department then just update the time in
                     cur.execute("UPDATE academic_queue SET Time_in=NOW() WHERE Number=%s", [number])
 
+        cur.execute("UPDATE check_changes SET recent_display=%s",["True"]) #setting recent display to be true
         #Commit to database
         mysql.connection.commit()
         #flash message
         flash('Entry Reassigned! ', 'success')
-        redirec(url_for('workspace'))
+        redirect(url_for('workspace'))
 
     #Fetch everything found, the reason why its after POST reassign is to update the changes we make
     queues = cur.fetchall()
@@ -401,6 +434,7 @@ def entry_call(number):
     cur = mysql.connection.cursor()
     #Update total_queue Set Status to be In Progress
     cur.execute("UPDATE total_queue SET Status=%s, Counter_number=%s WHERE Number=%s",("In Progress",[counter_number],[number]))
+    cur.execute("UPDATE check_changes SET recent_display=%s",["True"]) #setting recent display to be true
     #Commit to database
     mysql.connection.commit()
     #Close connection
@@ -443,6 +477,7 @@ def entry_complete(number):
         time2 = timedelta(0,0)
     #Update
     cur.execute("UPDATE total_queue SET Total_time = %s WHERE number=%s",([time1+time2],[number]))
+    cur.execute("UPDATE check_changes SET recent_display=%s",["True"]) #setting recent display to be true
     #commit to Database
     mysql.connection.commit()
     #Close connection

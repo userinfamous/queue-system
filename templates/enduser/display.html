@@ -31,3 +31,26 @@
   </div>
 </div>
 {% endblock %}
+
+{% block custom_scripts %}
+
+<script>
+  /* AJAX request to checker */
+  function check() {
+    var val;
+    $.ajax({
+      type: 'GET',
+      url: 'checker',
+      dataType: 'json',
+      data: {update_display : val },
+    }).done(function(response) {
+      if (response.update_display == 1) {
+        location.reload();
+      }
+    });
+  }
+  //Every 0.5 sec check if there is new update
+  setInterval(check,5000);
+</script>
+
+{% endblock %}

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Aug 16, 2018 at 06:18 AM
+-- Generation Time: Aug 28, 2018 at 04:28 PM
 -- Server version: 5.6.34-log
 -- PHP Version: 7.2.1
 
@@ -48,13 +48,6 @@ CREATE TABLE `accounting_queue` (
   `Time_diff` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `accounting_queue`
---
-
-INSERT INTO `accounting_queue` (`Number`, `Time_in`, `Time_out`, `Time_diff`) VALUES
-(1, '2018-08-16 05:34:17', '0000-00-00 00:00:00', '00:00:00');
-
 -- --------------------------------------------------------
 
 --
@@ -80,6 +73,26 @@ INSERT INTO `admins` (`ID`, `Name`, `Email`, `Username`, `Password`, `Department
 (1, 'Test1', 'test1@ciaschool.edu.kh', 'acct_1', '$5$rounds=535000$NQpVu2WMeQgVP/vV$sLcvN1C70RYfF0V5.Y4cz2Bb5gabC5gyLS6gm5FFn61', 'Accounting', NULL, '2018-08-10 09:49:46'),
 (2, 'test1', 'test1@ciaschool.edu.kh', 'fd_1', '$5$rounds=535000$nra5DFAJ8pz97Z7D$9NOvycsrBTepiM7ZzL/5.x46lz8HcGT0PfzT.DfaKt8', 'Front Desk', NULL, '2018-08-10 09:50:39'),
 (3, 'test1', 'test1@ciaschool.edu.kh', 'acd_1', '$5$rounds=535000$b2OsLadBfe9CM7tX$kqu6vL84GxX8KoGxKaQFrYs0bZHIDo0JTs3JI1kkw88', 'Academic', NULL, '2018-08-10 09:51:15');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `check_changes`
+--
+
+CREATE TABLE `check_changes` (
+  `id` int(11) NOT NULL,
+  `recent_counter` varchar(10) NOT NULL,
+  `old_counter` varchar(10) NOT NULL,
+  `recent_display` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `check_changes`
+--
+
+INSERT INTO `check_changes` (`id`, `recent_counter`, `old_counter`, `recent_display`) VALUES
+(0, '30', '30', 'False');
 
 -- --------------------------------------------------------
 
@@ -147,31 +160,6 @@ CREATE TABLE `total_queue` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `total_queue`
---
-
-INSERT INTO `total_queue` (`Number`, `User_type`, `Request_type`, `Parent_name`, `Contact`, `Student_name`, `Student_id`, `Status`, `Counter_number`, `Total_time`) VALUES
-(1, 'Parent', 'Finance Enquiry', 'Test1', '', 'adasd', '', 'In Progress', '1', '00:00:00');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `variables`
---
-
-CREATE TABLE `variables` (
-  `NUMBER` int(10) NOT NULL,
-  `DEPARTMENT` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `variables`
---
-
-INSERT INTO `variables` (`NUMBER`, `DEPARTMENT`) VALUES
-(2, 'Accounting');
-
---
 -- Indexes for dumped tables
 --
 
@@ -192,6 +180,12 @@ ALTER TABLE `accounting_queue`
 --
 ALTER TABLE `admins`
   ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `check_changes`
+--
+ALTER TABLE `check_changes`
+  ADD UNIQUE KEY `id` (`id`);
 
 --
 -- Indexes for table `front_desk_queue`
@@ -218,7 +212,7 @@ ALTER TABLE `academic_queue`
 -- AUTO_INCREMENT for table `accounting_queue`
 --
 ALTER TABLE `accounting_queue`
-  MODIFY `Number` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `Number` int(10) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `admins`
 --
@@ -233,7 +227,7 @@ ALTER TABLE `front_desk_queue`
 -- AUTO_INCREMENT for table `total_queue`
 --
 ALTER TABLE `total_queue`
-  MODIFY `Number` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;COMMIT;
+  MODIFY `Number` int(10) NOT NULL AUTO_INCREMENT;COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

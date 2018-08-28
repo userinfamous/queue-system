@@ -96,7 +96,7 @@
                   {% if queue.Status == 'In Progress' %}
                   <form action="{{url_for('entry_complete', number=queue.Number)}}" method="POST">
                     <input type="hidden" name="method" value="COMPLETE">
-                    <input id="complete-button" type="submit" value="Complete" class="btn btn-success">
+                    <input id="complete-button" type="submit" value="Complete" class="btn btn-primary">
                   </form>
                 </td>
                   {% endif %}
@@ -106,8 +106,9 @@
                 <td></td>
                 <td></td>
                 {% endif %}
-              {% endfor %}
               </tr>
+              {% endfor %}
+
             </tbody>
           </table>
           <!-- Display No Queue Message -->
@@ -136,25 +137,20 @@ What I need to do:
 -->
 <script>
   /* AJAX request to checker */
-  function check(){
+  function check() {
+    var val;
     $.ajax({
-      type: 'POST',
-      url: 'request_advance',
+      type: 'GET',
+      url: 'checker',
       dataType: 'json',
-      data: {
-        counter:$('#queue-list').data('counter')
-      }
-    }).done(function( response ) {
-      /* update counter */
-      $('#queue-list').data('counter',response.current);
-      /* check if with response we got a new update */
-      if(response.update==true){
-        $('#queue-list').html(response.news);
-
+      data: {update_workspace: val },
+    }).done(function(response) {
+      if (response.update_workspace == 1 || response.reassign == 1) {
+        location.reload();
       }
     });
   }
   //Every 0.5 sec check if there is new update
-  setInterval(check,2500);
+  setInterval(check,5000);
 </script>
 {% endblock %}
