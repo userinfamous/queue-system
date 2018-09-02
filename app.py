@@ -80,14 +80,23 @@ def request_basic():
     #set the old counter
     cur = mysql.connection.cursor()
     select = cur.execute("SELECT * FROM total_queue WHERE Status!=%s ORDER BY Number DESC",["Completed"]) #bottom up so we can fetch one of the latest queue numbers
-    old_count = cur.fetchone()["Number"]
-    cur.execute("UPDATE check_changes SET old_counter=%s WHERE id=0",[old_count]) #The reason we put this before is to get the before entry after the entry is added after this. (see below)
-    #Commit to the database
-    mysql.connection.commit()
+
+    #check for any number of selection
+    if select > 0:
+        old_count = cur.fetchone()["Number"]
+        cur.execute("UPDATE check_changes SET old_counter=%s WHERE id=0",[old_count]) #The reason we put this before is to get the before entry after the entry is added after this. (see below)
+        #Commit to the database
+        mysql.connection.commit()
+    else:
+        old_count = 0
+        cur.execute("UPDATE check_changes SET old_counter=%s WHERE id=0",[old_count])
+        mysql.connection.commit()
+    #close at the end
     cur.close()
 
     #Make a request form class object and pass in request data from template to the object
     form = RequestBasicForm(request.form)
+
     #If enduser presses confirm to submit the form
     if request.method == 'POST':
         #Pass form into a function that handles translation from data receieved

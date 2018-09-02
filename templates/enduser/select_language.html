@@ -6,32 +6,29 @@
 {% endblock %}
 
 {% block body %}
-  <div class="outer fadein" style="display:none">
+  <div class="outer">
     <div class="container middle text-center">
       <h3 class="pb-4"> <span class="khmer-font2"> ជ្រើសរើស​ភាសា</span>  /  Select Language </h3>
-
       <div class="row inner">
-          <div class="col-sm-6 pr-4">
-            <form action="" method="POST" >
-              <button type="submit" name="Selected_language" value="Khmer" class="btn btn-light submit-button-bigger">
-                <h4 class="khmer-font2">ខ្មែរ</h4>
-                <div class="clear"></div>
-                <img src="/static/flags/blank.gif" class="flag flag-kh" alt="Khmer" />
-              </button>
-            </form>
-          </div>
-
-          <div class="col-sm-6 pl-4">
-            <form action="" method="POST" >
-              <button type="submit" name="Selected_language" value="English" class="btn btn-light submit-button-bigger">
-                <h4>English</h4>
-                <div class="clear"></div>
-                <img src="/static/flags/blank.gif" class="flag flag-gb" alt="English"/>
-              </button>
-            </form>
-          </div>
+        <div class="col-sm-6 pr-4">
+          <form action="" method="POST" >
+            <button type="submit" name="Selected_language" value="Khmer" class="btn btn-light submit-button-bigger">
+              <h4 class="khmer-font2">ខ្មែរ</h4>
+              <div class="clear"></div>
+              <img src="/static/flags/blank.gif" class="flag flag-kh" alt="Khmer" />
+            </button>
+          </form>
+        </div>
+        <div class="col-sm-6 pl-4">
+          <form action="" method="POST" >
+            <button type="submit" name="Selected_language" value="English" class="btn btn-light submit-button-bigger">
+              <h4>English</h4>
+              <div class="clear"></div>
+              <img src="/static/flags/blank.gif" class="flag flag-gb" alt="English"/>
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-
 {% endblock %}
