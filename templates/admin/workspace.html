@@ -62,7 +62,7 @@
                 <th></th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="table-body">
               <!-- Queue Container -->
               {% for queue in queues %}
               <tr>
@@ -146,11 +146,11 @@ What I need to do:
       data: {update_workspace: val },
     }).done(function(response) {
       if (response.update_workspace == 1 || response.reassign == 1) {
-        location.reload();
+        $('#table-body').load();     // it will update the html of table body
       }
     });
   }
-  //Every 0.5 sec check if there is new update
+  //Every 5 sec check if there is new update
   setInterval(check,5000);
 </script>
 {% endblock %}

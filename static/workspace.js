@@ -1,5 +1,6 @@
 /*Wait for DOM to load before executing Javasripts*/
 $(document).ready(function () {
+  
   $('li.nav-item , h6.sidebar-heading').css('opacity', '0');
   $('nav.navbar').fadeIn("fast");
   $('main').slideDown("fast");

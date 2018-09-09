@@ -7,11 +7,11 @@
 
       {% if queue.Parent_name %}
         <div id="display-name"><p> {{queue.Parent_name}} </p></div>
-        <div id="display-info"><p>Please go to <strong>Counter {{queue.Counter_number}}</strong> of the {{queue.Department}} Department office. </p></div>
+        <div id="display-info"><p><span id="clause1"></span><strong> <span id="noun1"></span> {{queue.Counter_number}} </strong><span id="preposition"></span><span id="noun2"></span> {{queue.Department}} <span id="noun3"></span></p></div>
 
       {% elif queue.Student_name %}
         <div id="display-name"><p> {{queue.Student_name}} </p></div>
-        <div id="display-info"><p>Please go to <strong>Counter {{queue.Counter_number}}</strong> of the {{queue.Department}} Department office. </p></div>
+        <div id="display-info"><p><span id="clause1"></span><strong> <span id="noun1"></span> {{queue.Counter_number}} </strong><span id="preposition"></span><span id="noun2"></span> {{queue.Department}} <span id="noun3"></span></p></div>
       {% endif %}
 
       {%if queue.Department == 'Academic' %}
@@ -33,7 +33,8 @@
 {% endblock %}
 
 {% block custom_scripts %}
-
+<!-- Custom Jquert, this one is general for all template so it stays here-->
+<script type=text/javascript src="{{url_for('static', filename='display.js') }}"></script>
 <script>
   /* AJAX request to checker */
   function check() {
@@ -51,6 +52,46 @@
   }
   //Every 0.5 sec check if there is new update
   setInterval(check,5000);
+
+  let terms1 = ["Please go to ","សូមចូលទៅកាន់ "]; //array of terms to rotate
+  let terms2 = ["Counter ","តុរលេខ "]; //array of terms to rotate
+  let terms3 = [" of the ","នៃ"]; //array of terms to rotate
+  let terms4 = ["","ការិយាល័យ "]; //array of terms to rotate
+  let terms5 = ["Department office.",""]; //array of terms to rotate
+
+  function rotateTerm1() {
+    let ct = $("#clause1").data("term") || 0;
+    $("#clause1").data("term", ct == terms1.length -1 ? 0 : ct + 1).text(terms1[ct])
+                .fadeIn().delay(5000).fadeOut("slow", rotateTerm1);
+
+  }
+  function rotateTerm2() {
+    let ct = $("#noun1").data("term") || 0;
+    $("#noun1").data("term", ct == terms2.length -1 ? 0 : ct + 1).text(terms2[ct])
+                .fadeIn().delay(5000).fadeOut("slow", rotateTerm2);
+  }
+
+  function rotateTerm3() {
+    let ct = $("#preposition").data("term") || 0;
+    $("#preposition").data("term", ct == terms3.length -1 ? 0 : ct + 1).text(terms3[ct])
+                .fadeIn().delay(5000).fadeOut("slow", rotateTerm3);
+
+  }
+
+  function rotateTerm4() {
+    let ct = $("#noun2").data("term") || 0;
+    $("#noun2").data("term", ct == terms4.length -1 ? 0 : ct + 1).text(terms4[ct])
+                .fadeIn().delay(5000).fadeOut("slow", rotateTerm4);
+
+  }
+
+  function rotateTerm5() {
+    let ct = $("#noun3").data("term") || 0;
+    $("#noun3").data("term", ct == terms5.length -1 ? 0 : ct + 1).text(terms5[ct])
+                .fadeIn().delay(5000).fadeOut("slow", rotateTerm5);
+
+  }
+
 </script>
 
 {% endblock %}

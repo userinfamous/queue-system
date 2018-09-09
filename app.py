@@ -325,12 +325,14 @@ def workspace():
 
     #connect to database
     cur = mysql.connection.cursor()
+
     #Select all data from associated workspace
     results = cur.execute("""SELECT *
     FROM total_queue JOIN (request_types)
     ON (total_queue.Request_type = request_types.Request_type)
     WHERE request_types.Department = %s AND total_queue.Status != %s
     ORDER BY Number ASC""", (session["department"], ["Completed"])) #!= accounts for waiting numbers too
+
     #if admin presses reassign button
     if request.method == 'POST':
         #Get request_type from reassign form
@@ -398,9 +400,11 @@ def workspace():
         cur.execute("UPDATE check_changes SET recent_display=%s",["True"]) #setting recent display to be true
         #Commit to database
         mysql.connection.commit()
+
+        cur.close()
         #flash message
         flash('Entry Reassigned! ', 'success')
-        redirect(url_for('workspace'))
+        return redirect(url_for('workspace'))
 
     #Fetch everything found, the reason why its after POST reassign is to update the changes we make
     queues = cur.fetchall()

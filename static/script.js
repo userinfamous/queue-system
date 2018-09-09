@@ -7,5 +7,4 @@ $(document).ready(function () {
 
   /*End User Pages*/
   $('.fadein').fadeIn("slow");
-
 });
